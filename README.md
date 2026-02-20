@@ -1,2 +1,3 @@
 # portfolio
-My portfolio site
+
+This repository is my portfolio site.
