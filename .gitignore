@@ -6,16 +6,18 @@
 ehthumbs.db
 Thumbs.db
 
+/bin
+
 .vscode/*
-!.vscode/settings.json.default
-!.vscode/extensions.json.default
-!.vscode/tasks.json.default
-!.vscode/launch.json.default
+!.vscode/settings.json.example
+!.vscode/extensions.json.example
+!.vscode/tasks.json.example
+!.vscode/launch.json.example
 .idea/
 *.swp
 *.swo
 
-.env
+.env.local
 *.pem
 *.key
 *.p12

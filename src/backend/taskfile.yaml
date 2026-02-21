@@ -1,0 +1,16 @@
+version: 3
+
+includes:
+  local:
+    taskfile: ./tasks/local.yaml
+    flatten: true
+
+  container:
+    taskfile: ./tasks/container.yaml
+
+tasks:
+  dir: {.TASKFILE_DIR}
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list

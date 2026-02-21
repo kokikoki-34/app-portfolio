@@ -1,0 +1,19 @@
+version: 3
+
+tasks:
+  build:
+    desc: Build the container image.
+    cmds:
+    - cmd: container build -t app-backend .
+      platforms: [darwin]
+    - cmd: docker build -t app-backend .
+      platforms: [linux]
+
+  run:
+    desc: Run the server in Container.
+    interactive: true
+    cmds:
+    - cmd: container run -p {{.PORT_BACKEND}}:{{.PORT_BACKEND}} -e ARCH={{.ARCH}} -e PORT_BACKEND={{.PORT_BACKEND}} app-backend
+      platforms: [darwin]
+    - cmd: docker run -p {{.PORT_BACKEND}}:{{.PORT_BACKEND}} -e ARCH={{.ARCH}} -e PORT_BACKEND={{.PORT_BACKEND}}  app-backend
+      platforms: [linux]
