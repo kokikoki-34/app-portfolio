@@ -3,6 +3,7 @@ version: 3
 tasks:
   build:
     desc: Build the container image.
+    dir: "{{.ROOT_DIR}}/src/backend"
     cmds:
     - cmd: container build -t app-backend .
       platforms: [darwin]
@@ -11,9 +12,9 @@ tasks:
 
   run:
     desc: Run the server in Container.
-    interactive: true
+    dir: "{{.ROOT_DIR}}/src/backend"
     cmds:
-    - cmd: container run -p {{.PORT_BACKEND}}:{{.PORT_BACKEND}} -e ARCH={{.ARCH}} -e PORT_BACKEND={{.PORT_BACKEND}} app-backend
+    - cmd: container run -p {{.PORT_BACKEND}}:8080 app-backend
       platforms: [darwin]
-    - cmd: docker run -p {{.PORT_BACKEND}}:{{.PORT_BACKEND}} -e ARCH={{.ARCH}} -e PORT_BACKEND={{.PORT_BACKEND}}  app-backend
+    - cmd: docker run -p {{.PORT_BACKEND}}:8080 app-backend
       platforms: [linux]

@@ -1,0 +1,18 @@
+version: 3
+
+tasks:
+  run:
+    desc: Run the server locally.
+    dir: "{{.ROOT_DIR}}/src/backend"
+    vars:
+      PORT: '{{default "8001" .PORT}}'
+    cmds:
+      - task: build
+      - PORT={{.PORT_BACKEND}} ./bin/api
+
+  build:
+    desc: Build the server.
+    dir: "{{.ROOT_DIR}}/src/backend"
+    cmds:
+      - mkdir -p bin
+      - go build -o bin/api cmd/api/main.go

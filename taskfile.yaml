@@ -1,8 +1,17 @@
 version: 3
 
 includes:
-  backend:
-    taskfile: ./src/backend/taskfile.yaml
+  local:backend:
+    taskfile: ./tasks/backend/local.yaml
+
+  local:frontend:
+    taskfile: ./tasks/frontend/local.yaml
+
+  container:backend:
+    taskfile: ./tasks/backend/container.yaml
+
+  container:frontend:
+    taskfile: ./tasks/frontend/container.yaml
 
 tasks:
   default:
@@ -15,3 +24,19 @@ tasks:
     cmds:
       - mise install
       - direnv allow
+
+  run:
+    desc: "Run BOTH apps. (Usage: task dev [MODE=container])"
+    vars:
+      MODE: '{{default "local" .MODE}}'
+    deps:
+      - task: "{{.MODE}}:backend:run"
+      - task: "{{.MODE}}:frontend:run"
+
+  build:
+    desc: "Build BOTH apps. (Usage: task build [MODE=container])"
+    vars:
+      MODE: '{{default "local" .MODE}}'
+    deps:
+      - task: "{{.MODE}}:backend:build"
+      - task: "{{.MODE}}:frontend:build"
