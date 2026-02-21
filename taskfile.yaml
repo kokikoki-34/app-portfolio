@@ -1,0 +1,17 @@
+version: 3
+
+includes:
+  backend:
+    taskfile: ./src/backend/taskfile.yaml
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+
+  setup:
+    desc: Set up develop environment
+    cmds:
+      - mise install
+      - direnv allow
