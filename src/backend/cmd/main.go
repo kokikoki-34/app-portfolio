@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"portfolio/internal/interface/handler"
+	"portfolio/internal/api/handler"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 	healthHandler := handler.NewHealthHandler(logger)
 	mux.HandleFunc("GET /api/health", healthHandler.Check)
 
-	portEnv := os.Getenv("PORT_BACKEND")
+	portEnv := os.Getenv("PORT")
 	if portEnv == "" {
 		portEnv = "8080"
 	}
