@@ -13,6 +13,9 @@ includes:
   container:frontend:
     taskfile: ./tasks/frontend/container.yaml
 
+  container:proxy:
+    taskfile: ./tasks/proxy/container.yaml
+
 tasks:
   default:
     desc: List available tasks
@@ -25,20 +28,65 @@ tasks:
       - mise install
       - direnv allow
 
-  local:run:
-    desc: "Run BOTH apps locally."
+  # ---------------------------------------------------------
+  # Public API (You only need to run these)
+  # ---------------------------------------------------------
+  build:
+    desc: "Build apps. Usage: task build [MODE=local|container] (default: container)"
+    vars:
+      MODE: '{{default "container" .MODE}}'
     cmds:
-      - overmind start
+      - task: '{{.MODE}}:build'
 
+  run:
+    desc: "Run apps. Usage: task run [MODE=local|container] (default: container)"
+    vars:
+      MODE: '{{default "container" .MODE}}'
+    cmds:
+      - task: '{{.MODE}}:run'
+
+  clean:
+    desc: "Clean up residual processes. Usage: task clean [MODE=local|container]"
+    vars:
+      MODE: '{{default "container" .MODE}}'
+    cmds:
+      - task: '{{.MODE}}:clean'
+
+  # ---------------------------------------------------------
+  # Internal Implementation
+  # ---------------------------------------------------------
   local:build:
-    desc: "Build BOTH apps locally."
+    internal: true
     cmds:
       - task: "local:backend:build"
       - task: "local:frontend:build"
 
+  local:run:
+    internal: true
+    cmds:
+      - overmind start
+
   local:clean:
-    desc: Clean up residual processes if any
+    internal: true
+    desc: "Clean up residual local processes"
     cmds:
       - pkill -f "nginx|api|vite" || true
 
-  
+  # ---------------------------------------------------------
+  # Internal Implementations
+  # ---------------------------------------------------------
+  container:build:
+    internal: true
+    cmds:
+      - docker compose build
+
+  container:run:
+    internal: true
+    cmds:
+      - docker compose up
+
+  container:clean:
+    internal: true
+    desc: "Clean up residual container"
+    cmds:
+      - docker compose down

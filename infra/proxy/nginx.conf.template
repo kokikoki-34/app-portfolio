@@ -22,7 +22,7 @@ http {
         location / {
             proxy_pass http://localhost:${PORT_FRONTEND};
             proxy_set_header Host $host;
-            proxy_set_header Upgrade $http_upgrade; # WebSocket用（HMRに必要）
+            proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
         }
     }

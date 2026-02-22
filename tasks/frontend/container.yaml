@@ -5,17 +5,10 @@ tasks:
     desc: Run the frontend development server
     dir: "{{.ROOT_DIR}}/src/frontend"
     cmds:
-    - cmd: container run -p {{.PORT_FRONTEND}}:80 app-frontend
-      platforms: [darwin]
     - cmd: docker run -p {{.PORT_FRONTEND}}:80 app-frontend
-      platforms: [linux]
-
 
   build:
     desc: Build the frontend for production
     dir: "{{.ROOT_DIR}}/src/frontend"
     cmds:
-    - cmd: container build -t app-frontend .
-      platforms: [darwin]
     - cmd: docker build -t app-frontend .
-      platforms: [linux]
