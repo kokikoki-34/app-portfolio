@@ -1,0 +1,29 @@
+# infra/proxy/nginx.conf
+pid /tmp/nginx_local.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    access_log /dev/stdout;
+    error_log /dev/stderr;
+
+    server {
+        listen ${PORT_PROXY};
+        server_name localhost;
+
+        location /api/ {
+            proxy_pass http://localhost:${PORT_BACKEND};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        location / {
+            proxy_pass http://localhost:${PORT_FRONTEND};
+            proxy_set_header Host $host;
+            proxy_set_header Upgrade $http_upgrade; # WebSocket用（HMRに必要）
+            proxy_set_header Connection "upgrade";
+        }
+    }
+}

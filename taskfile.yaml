@@ -25,18 +25,20 @@ tasks:
       - mise install
       - direnv allow
 
-  run:
-    desc: "Run BOTH apps. (Usage: task dev [MODE=container])"
-    vars:
-      MODE: '{{default "local" .MODE}}'
-    deps:
-      - task: "{{.MODE}}:backend:run"
-      - task: "{{.MODE}}:frontend:run"
+  local:run:
+    desc: "Run BOTH apps locally."
+    cmds:
+      - overmind start
 
-  build:
-    desc: "Build BOTH apps. (Usage: task build [MODE=container])"
-    vars:
-      MODE: '{{default "local" .MODE}}'
-    deps:
-      - task: "{{.MODE}}:backend:build"
-      - task: "{{.MODE}}:frontend:build"
+  local:build:
+    desc: "Build BOTH apps locally."
+    cmds:
+      - task: "local:backend:build"
+      - task: "local:frontend:build"
+
+  local:clean:
+    desc: Clean up residual processes if any
+    cmds:
+      - pkill -f "nginx|api|vite" || true
+
+  
