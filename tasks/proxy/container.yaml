@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  build:
+    desc: "Build reverse proxy"
+    cmds:
+      - docker build -t app-proxy ./infra/proxy
+
+  run:
+    desc: "Run reverse proxy"
+    cmds:
+      - docker run -p {{.PORT_PROXY}}:80 app-proxy
