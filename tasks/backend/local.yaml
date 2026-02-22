@@ -15,4 +15,4 @@ tasks:
     dir: "{{.ROOT_DIR}}/src/backend"
     cmds:
       - mkdir -p bin
-      - go build -o bin/api cmd/api/main.go
+      - go build -o bin/api cmd/main.go

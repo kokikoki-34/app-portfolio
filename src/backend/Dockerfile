@@ -9,7 +9,7 @@ COPY go.mod ./
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o /app/server ./cmd/api/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o /app/server ./cmd/main.go
 
 # ==========================================
 # Runner

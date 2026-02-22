@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"portfolio/internal/interface/handler"
+	"portfolio/internal/api/handler"
 )
 
 func main() {
