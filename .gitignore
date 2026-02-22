@@ -1,3 +1,4 @@
+# macOS specific files
 .DS_Store
 .DS_Store?
 ._*
@@ -6,8 +7,11 @@
 ehthumbs.db
 Thumbs.db
 
+# directories
 /bin
+/log
 
+# editor setting files
 .vscode/*
 !.vscode/settings.json.example
 !.vscode/extensions.json.example
@@ -17,7 +21,13 @@ Thumbs.db
 *.swp
 *.swo
 
-.env.local
+# environment files
+*.local
+*.local.*
+!*.example
+!*.template
+
+# key files
 *.pem
 *.key
 *.p12

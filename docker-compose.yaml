@@ -1,0 +1,32 @@
+# docker-compose.yml
+name: app-portfolio
+
+services:
+  # ---------------------------------------------------------
+  # Nginx Reverse Proxy (The only exposed service)
+  # ---------------------------------------------------------
+  proxy:
+    build:
+      context: infra/proxy
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT_PROXY:-8000}:80
+    depends_on:
+      - backend
+      - frontend
+
+  # ---------------------------------------------------------
+  # Go Backend API
+  # ---------------------------------------------------------
+  backend:
+    build:
+      context: src/backend
+      dockerfile: Dockerfile
+
+  # ---------------------------------------------------------
+  # React/Vite Frontend
+  # ---------------------------------------------------------
+  frontend:
+    build:
+      context: src/frontend
+      dockerfile: Dockerfile
