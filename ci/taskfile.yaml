@@ -1,0 +1,18 @@
+version: 3
+
+tasks:
+  default:
+    deps:
+      - task: ci-test
+
+  ci-test:
+    desc: "Run containers in the background for CI environment and check status"
+    cmds:
+      - docker compose up -d
+      - sleep 10
+      - |
+        if ! docker compose ps | grep "Up"; then
+          echo "Containers failed to start!"
+          docker compose logs
+          exit 1
+        fi

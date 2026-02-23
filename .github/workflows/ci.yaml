@@ -1,0 +1,30 @@
+name: CI Pipeline (Task Based)
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-test:
+    name: Build & Test via Task
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install Task
+        uses: go-task/setup-task@v1
+        with:
+          version: 3.x
+
+      - name: Build Images
+        run: task build
+
+      - name: Run Tests
+        run: task -t ci/taskfile.yaml ci-test
+
+      - name: Tear Down
+        run: task clean
