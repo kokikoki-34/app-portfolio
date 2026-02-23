@@ -12,21 +12,39 @@ services:
     ports:
       - ${PORT_PROXY:-8000}:80
     depends_on:
-      - backend
-      - frontend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
 
   # ---------------------------------------------------------
   # Go Backend API
   # ---------------------------------------------------------
   backend:
+    platform: linux/arm64
     build:
       context: src/backend
       dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   # ---------------------------------------------------------
   # React/Vite Frontend
   # ---------------------------------------------------------
   frontend:
+    platform: linux/arm64
     build:
       context: src/frontend
       dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
