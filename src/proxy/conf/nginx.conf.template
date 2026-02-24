@@ -1,4 +1,3 @@
-# infra/proxy/nginx.conf
 pid /tmp/nginx_local.pid;
 
 events {

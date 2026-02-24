@@ -3,10 +3,11 @@ version: '3'
 tasks:
   build:
     desc: "Build reverse proxy"
+    dir: "{{.ROOT_DIR}}/src/proxy"
     cmds:
-      - docker build -t app-proxy ./infra/proxy
+      - docker build -t app-proxy .
 
   run:
     desc: "Run reverse proxy"
     cmds:
-      - docker run -p {{.PORT_PROXY}}:80 app-proxy
+      - docker run -p {{.PORT_PROXY}}:8080 -e URL_BACKEND=http://localhost:{{.PORT_BACKEND}} -e URL_FRONTEND=http://localhost:{{.PORT_FRONTEND}} app-proxy
