@@ -2,22 +2,46 @@ locals {
   project_id = "app-portfolio-488310"
 }
 
+resource "google_service_account" "proxy_sa" {
+  account_id   = "app-portfolio-proxy-sa"
+  display_name = "Service Account for Cloud Run Proxy"
+}
+
 # 1. Frontend Service
 module "cloudrun_frontend" {
-  source       = "../../modules/cloudrun"
-  project_id   = local.project_id
-  service_name = "app-portfolio-frontend-dev"
+  source         = "../../modules/cloudrun"
+  project_id     = local.project_id
+  service_name   = "app-portfolio-frontend-dev"
 
-  # Deploy a dummy image initially to solve the "Chicken and Egg" problem
-  image        = "us-docker.pkg.dev/cloudrun/container/hello"
+  image          = "us-docker.pkg.dev/cloudrun/container/hello"
+  invoker_member = "user:kokiyasui.dev@gmail.com"
+
+  invoker_members = [
+    "user:kokiyasui.dev@gmail.com",
+    "serviceAccount:app-portfolio-proxy-sa@app-portfolio-488310.iam.gserviceaccount.com"
+  ]
 }
 
 # 2. Backend Service
 module "cloudrun_backend" {
+  source         = "../../modules/cloudrun"
+  project_id     = local.project_id
+  service_name   = "app-portfolio-backend-dev"
+
+  image          = "us-docker.pkg.dev/cloudrun/container/hello"
+  invoker_member = "user:kokiyasui.dev@gmail.com"
+
+  invoker_members = [
+    "user:kokiyasui.dev@gmail.com",
+    "serviceAccount:app-portfolio-proxy-sa@app-portfolio-488310.iam.gserviceaccount.com"
+  ]
+}
+
+module "cloudrun_proxy" {
   source       = "../../modules/cloudrun"
   project_id   = local.project_id
-  service_name = "app-portfolio-backend-dev"
-
-  # Deploy a dummy image initially to solve the "Chicken and Egg" problem
+  service_name = "app-portfolio-proxy-dev"
   image        = "us-docker.pkg.dev/cloudrun/container/hello"
+
+  service_account = google_service_account.proxy_sa.email
 }

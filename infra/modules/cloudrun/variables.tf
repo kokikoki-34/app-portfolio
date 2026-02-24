@@ -18,3 +18,19 @@ variable "image" {
   type        = string
   description = "The container image to deploy initially"
 }
+
+variable "invoker_member" {
+  type        = string
+  description = "Member to grant invoker role"
+  default     = null
+}
+
+variable "invoker_members" {
+  type    = list(string)
+  default = []
+}
+
+variable "service_account" {
+  type    = string
+  default = null
+}

@@ -92,7 +92,7 @@ jobs:
           service: "app-portfolio-backend-dev"
           image: ${{ env.BACKEND_IMAGE }}
           region: ${{ env.REGION }}
-          flags: "--allow-unauthenticated"
+          flags: --no-allow-unauthenticated
 
       # 2. Deploy Frontend
       - name: Deploy Frontend
@@ -102,7 +102,7 @@ jobs:
           service: "app-portfolio-frontend-dev"
           image: ${{ env.FRONTEND_IMAGE }}
           region: ${{ env.REGION }}
-          flags: "--allow-unauthenticated --port 8080"
+          flags: --no-allow-unauthenticated
 
       # 3. Deploy Proxy (Receives URLs from above steps)
       - name: Deploy Proxy
