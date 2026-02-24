@@ -12,6 +12,8 @@ services:
     environment:
       - URL_BACKEND=http://backend:8080
       - URL_FRONTEND=http://frontend:8080
+      - ID_TOKEN_BACKEND=dummy_token
+      - ID_TOKEN_FRONTEND=dummy_token
     ports:
       - ${PORT_PROXY:-8888}:8080
     depends_on:

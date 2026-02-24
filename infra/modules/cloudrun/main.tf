@@ -9,6 +9,7 @@ resource "google_cloud_run_v2_service" "default" {
     containers {
       image = var.image
     }
+    service_account = var.service_account
   }
 
   # ⚠️ ARCHITECT'S MAGIC:
@@ -22,11 +23,12 @@ resource "google_cloud_run_v2_service" "default" {
   }
 }
 
-# 2. Allow public access to the service
-# resource "google_cloud_run_v2_service_iam_member" "public" {
-#   project  = google_cloud_run_v2_service.default.project
-#   location = google_cloud_run_v2_service.default.location
-#   name     = google_cloud_run_v2_service.default.name
-#   role     = "roles/run.invoker"
-#   member   = "allUsers"
-# }
+resource "google_cloud_run_v2_service_iam_member" "invoker" {
+  for_each = toset(var.invoker_members)
+
+  project  = google_cloud_run_v2_service.default.project
+  location = google_cloud_run_v2_service.default.location
+  name     = google_cloud_run_v2_service.default.name
+  role     = "roles/run.invoker"
+  member   = each.value
+}
