@@ -28,7 +28,7 @@ jobs:
         run: task build
 
       - name: Run Tests
-        run: task -t ci/taskfile.yaml ci-test
+        run: task -t ./infra/ci/taskfile.yaml ci-test
 
       - name: Tear Down
         run: task clean

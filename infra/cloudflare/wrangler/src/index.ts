@@ -33,14 +33,10 @@ export default {
         redirect: 'manual'
       });
 
-      // 1. Cloud Run からレスポンスを取得
       const response = await fetch(newRequest);
 
-      // 2. レスポンスヘッダーをコピーして新しいヘッダーオブジェクトを作成
       const responseHeaders = new Headers(response.headers);
 
-      // 3. ブラウザが正しく解釈できるように、オリジナルのヘッダーをそのまま返却する
-      // これにより Content-Type: text/html 等が正しく伝わります
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,

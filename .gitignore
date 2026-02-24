@@ -12,7 +12,7 @@ Thumbs.db
 /log
 
 # packages
-/node_modules
+**/node_modules
 
 # editor setting files
 .vscode/*
