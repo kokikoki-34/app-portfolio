@@ -11,6 +11,9 @@ Thumbs.db
 /bin
 /log
 
+# packages
+/node_modules
+
 # editor setting files
 .vscode/*
 !.vscode/settings.json.example
