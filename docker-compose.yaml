@@ -7,10 +7,13 @@ services:
   # ---------------------------------------------------------
   proxy:
     build:
-      context: infra/proxy
+      context: src/proxy
       dockerfile: Dockerfile
+    environment:
+      - URL_BACKEND=http://backend:8080
+      - URL_FRONTEND=http://frontend:8080
     ports:
-      - ${PORT_PROXY:-8000}:80
+      - ${PORT_PROXY:-8888}:8080
     depends_on:
       backend:
         condition: service_healthy
@@ -25,7 +28,7 @@ services:
       context: src/backend
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - ${PORT_BACKEND:-5050}:8080
     healthcheck:
       test: ["CMD", "/healthcheck"]
       interval: 30s
@@ -41,7 +44,7 @@ services:
       context: src/frontend
       dockerfile: Dockerfile
     ports:
-      - 5173:8080
+      - ${PORT_FRONTEND:-5173}:8080
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080"]
       interval: 30s
