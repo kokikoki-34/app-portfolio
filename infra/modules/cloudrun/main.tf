@@ -3,7 +3,7 @@ resource "google_cloud_run_v2_service" "default" {
   name     = var.service_name
   location = var.region
   project  = var.project_id
-  ingress  = "INGRESS_TRAFFIC_ALL"
+  ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
   template {
     containers {
@@ -12,8 +12,6 @@ resource "google_cloud_run_v2_service" "default" {
     service_account = var.service_account
   }
 
-  # ⚠️ ARCHITECT'S MAGIC:
-  # Ignore image changes so Terraform doesn't overwrite future CI/CD deployments!
   lifecycle {
     ignore_changes = [
       template[0].containers[0].image,

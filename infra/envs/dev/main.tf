@@ -45,3 +45,16 @@ module "cloudrun_proxy" {
 
   service_account = google_service_account.proxy_sa.email
 }
+
+resource "google_cloud_run_domain_mapping" "proxy_domain" {
+  location = "asia-northeast1"
+  name     = "kokiyasui.com"
+
+  metadata {
+    namespace = local.project_id
+  }
+
+  spec {
+    route_name = module.cloudrun_proxy.service_name
+  }
+}
