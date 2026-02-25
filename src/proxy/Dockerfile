@@ -1,6 +1,10 @@
-FROM nginx:alpine
-COPY conf/default.conf /etc/nginx/templates/default.conf.template
+FROM openresty/openresty:alpine-fat
+
+RUN luarocks install lua-resty-http
+
+COPY conf/nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+COPY auth.lua /etc/nginx/lua/auth.lua
+
 EXPOSE 8080
-CMD ["/bin/sh", "-c", "\
-      envsubst '$URL_BACKEND $URL_FRONTEND' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && \
-      nginx -g 'daemon off;'"]
+
+CMD ["openresty", "-g", "daemon off;"]
