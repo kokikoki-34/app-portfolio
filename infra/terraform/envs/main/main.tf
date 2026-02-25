@@ -1,11 +1,11 @@
 module "app" {
   source = "../../modules/app"
-  env = "-dev"
-  domain_name = "dev.kokiyasui.com"
+  env = ""
+  domain_name = "kokiyasui.com"
 
   invoker_member = "user:kokiyasui.dev@gmail.com"
   invoker_members = [
     "user:kokiyasui.dev@gmail.com",
-    "serviceAccount:app-portfolio-proxy-sa-dev@app-portfolio-488310.iam.gserviceaccount.com"
+    "serviceAccount:app-portfolio-proxy-sa@app-portfolio-488310.iam.gserviceaccount.com"
   ]
 }
