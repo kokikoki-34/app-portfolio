@@ -1,6 +1,31 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "cloudflare-proxy",
+	"vars": {
+		"ENV": "main",
+		"PROXY_TARGET": "https://app-portfolio-proxy-442469161656.asia-northeast1.run.app"
+	},
+	"env": {
+		"dev": {
+			"name": "cloudflare-proxy-dev",
+			"vars": {
+				"ENV": "dev",
+				"PROXY_TARGET": "https://app-portfolio-proxy-dev-442469161656.asia-northeast1.run.app"
+			},
+			"routes": [
+				{
+					"pattern": "dev.kokiyasui.com/*",
+					"zone_name": "kokiyasui.com"
+				}
+			],
+			"observability": {
+				"enabled": false,
+				"logs": {
+					"enabled": false
+				}
+			}
+		}
+	},
 	"main": "src/index.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": [
@@ -16,7 +41,4 @@
 			"zone_name": "kokiyasui.com"
 		}
 	],
-	"vars": {
-		"GCP_SERVICE_ACCOUNT_KEY": "{\"type\":\"service_account\",\"project_id\":\"app-portfolio-488310\",\"private_key_id\":\"ba41123745deb82e232d73564162aa725b2bd1f6\",\"private_key\":\"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCr1WlQFwllwvwu\\nPZLix0sWOAM7q3mqLAHEnu4laOhDU+i2AB+kixwcrX6GJxbbN/tlrAP7ANVtVG1J\\nDJNM46Xw9lwGwQ/SsZWzKdRJ24AAZUO1G/6WrAlwGXfkGS03+I5okBEu51UbXZJv\\natM6/Sfb+RpKkr9Q/cnW/xiYlR8lM7UEgBNoVucCGE3Sz6HkNtmZwJIbecKEJVGh\\nn5Lq0bQlFrFJYsK7KVMRFfTOjwJKILw1F4/pviI7x5gVGBjcuIDpWzWo8ZeIcXGx\\n4/uAv0+lP1HfDeIFjovViBN0vVqnOEtANnDr9Kp94ZxyGU6dXtM8qWvmTdlvdtl/\\nlaraHZ7BAgMBAAECggEABv1kTmbTGFaEeQJCzNwyUKH23U3RSHWIA64694ubOYEa\\ny/h/HdIVn5Cd8nZ5maSr1cvX0TVZLGlASGkgcgLBCwD1s/kITz5JEPCVKAUrrkuj\\ncIt5R9P36FCPTdiJiQ4HB14Ns0lwVVYkZElFdJzvd6VcILqnP9pEnez8XHL7p6dj\\nMSI1NJE3khF7Tb88PtmwA/1WMcru0dY2+spzO/WsjK1WbEKhhbT4i0rHoD6j9Zzt\\nNNDmdJ8AiYa2xnHkd/CDcFHzG6XfMNYJQWLKTf+FTxIv1Oo0oph49y5lAlsZdf89\\nBfJzeyx/BgoNoBTCep0BjFnI0M5AlAxVvWlFBT3tZwKBgQDirO+ZAEyMfHt+aNO5\\nsGmI/ks55pNL9BNs0Q8UaXmrtdttkN8TjRFReVWg2znWYRv9Eafk78lkMIlsSEcV\\nMLs5815r8X4EN2NB6Abhij71OVRKQezYcXlHcksbb4qQDTSLTSqIt6e1IT0SJ2XR\\nqPl6Y1NBh+pQk/Xb+pOikoIYKwKBgQDCEDdDx1h/StQ6/bCfQtsgfXHZxhxN/ALf\\nnnuxMoEhwvzu2g0577IYyXjaVEaajsXsa8N5UYcVNJjXGRqZWNTI0NhXwFOL6YGa\\nYvwjcSLDl37uYx19O+Zyo5Saw1eCwQzIt9aeXcR7+FC4mkVi/cxl4lJWVMKkUkAW\\nHg5Kwi6iwwKBgFbBb5Z0ide/ERjpkBdi0JGRGkOX30pTqVedkBL0549zs/70UpzO\\nAhHXyZEeNr25PxgVuNejesXw2bfq1eHjW9UrMzlHHT8J3+BqqK+L1NrQTVV6c+bH\\nT26r7NkcUMEffLvQFfZrrDFj/lbDY3HiJVHVUBklpuWeK5w9BGJVhpsvAoGBAMCL\\nVknpf+TMWcYt7xAVRVT3If7wkSTO5gr5M8CcW4Mj89EIiBbzu8DcJQx6kZLIFZh9\\nU3ULbvubNAo23i1H9ddJX12xdTNcezqy+3guyE9IAKiFrrySshMMOmVTa4BQCl8c\\nB9UZM9nMhkqixjVxm1t7MjZ14qkm8m7/Yy7Je3wBAoGANUoD5UdPAd3dLfPePYV2\\nEoEQsR+Rg8fNNd5sU1elk9JeyWLCXmXdayXhN8gGZkCOqNZKcF7hfB5Vw5+299QY\\nToXly1nNOLJdBqMn+HMd/gZUKBK1WQHd/MdMLUTQrb+/KgS5CbeLhlemu/nRmEpm\\n56Z+97Ky0K02/KngW4AONDo=\\n-----END PRIVATE KEY-----\\n\",\"client_email\":\"app-portfolio-proxy@app-portfolio-488310.iam.gserviceaccount.com\",\"client_id\":\"100880991225891954502\",\"auth_uri\":\"https://accounts.google.com/o/oauth2/auth\",\"token_uri\":\"https://oauth2.googleapis.com/token\",\"auth_provider_x509_cert_url\":\"https://www.googleapis.com/oauth2/v1/certs\",\"client_x509_cert_url\":\"https://www.googleapis.com/robot/v1/metadata/x509/app-portfolio-proxy%40app-portfolio-488310.iam.gserviceaccount.com\",\"universe_domain\":\"googleapis.com\"}"
-	}
 }
