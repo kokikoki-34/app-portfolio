@@ -104,7 +104,9 @@ jobs:
           service: "app-portfolio-backend${{ env.SERVICE_SUFFIX }}"
           image: ${{ env.BACKEND_IMAGE }}
           region: ${{ env.REGION }}
-          flags: --no-allow-unauthenticated
+          flags: |
+            --no-allow-unauthenticated
+            --ingress=internal
 
       # 2. Deploy Frontend Service
       - name: Deploy Frontend
@@ -114,7 +116,9 @@ jobs:
           service: "app-portfolio-frontend${{ env.SERVICE_SUFFIX }}"
           image: ${{ env.FRONTEND_IMAGE }}
           region: ${{ env.REGION }}
-          flags: --no-allow-unauthenticated
+          flags: |
+            --no-allow-unauthenticated
+            --ingress=internal
 
       # 3. Deploy Proxy Service (Injects Backend/Frontend URLs)
       - name: Deploy Proxy
@@ -123,7 +127,8 @@ jobs:
           service: "app-portfolio-proxy${{ env.SERVICE_SUFFIX }}"
           image: ${{ env.PROXY_IMAGE }}
           region: ${{ env.REGION }}
-          flags: "--allow-unauthenticated"
+          flags: |
+            --allow-unauthenticated
           # Inject dynamic URLs generated in previous steps into Proxy env vars
           env_vars: |
             URL_BACKEND=${{ steps.deploy-backend.outputs.url }}
