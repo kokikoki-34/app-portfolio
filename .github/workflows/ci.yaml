@@ -14,7 +14,6 @@ jobs:
   build-and-test:
     name: Build & Test via Task
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -34,7 +33,9 @@ jobs:
         run: task clean
 
   deploy:
-    name: Deploy to Cloud Run (Dev)
+    name: Deploy to Cloud Run
+    # Only deploy on push events, not on pull requests
+    if: github.event_name == 'push'
     needs: build-and-test
     runs-on: ubuntu-latest
     env:
@@ -47,7 +48,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Authenticate to Google Cloud via Workload Identity
+      # Determine environment variables based on the branch name
+      - name: Set environment specific variables
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "ENV_NAME=main" >> $GITHUB_ENV
+            echo "SERVICE_SUFFIX=" >> $GITHUB_ENV # Production uses no suffix
+          else
+            echo "ENV_NAME=dev" >> $GITHUB_ENV
+            echo "SERVICE_SUFFIX=-dev" >> $GITHUB_ENV # Development uses -dev suffix
+          fi
+
+      # Authenticate to Google Cloud via Workload Identity Federation
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -55,64 +67,64 @@ jobs:
           workload_identity_provider: "projects/442469161656/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
           service_account: "github-actions-deployer@app-portfolio-488310.iam.gserviceaccount.com"
 
-      # Configure Docker to use gcloud as a credential helper
+      # Configure Docker to use gcloud as a credential helper for Artifact Registry
       - name: Docker Auth
         run: |
           gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
 
-      # Build and Push Backend Image
+      # Build and Push Backend Image with environment-specific tags
       - name: Build and Push Backend
         run: |
-          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/backend:${{ github.sha }}"
+          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/backend-${{ env.ENV_NAME }}:${{ github.sha }}"
           docker build -t $TAG ./src/backend
           docker push $TAG
           echo "BACKEND_IMAGE=$TAG" >> $GITHUB_ENV
 
-      # Build and Push Frontend Image
+      # Build and Push Frontend Image with environment-specific tags
       - name: Build and Push Frontend
         run: |
-          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/frontend:${{ github.sha }}"
+          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/frontend-${{ env.ENV_NAME }}:${{ github.sha }}"
           docker build -t $TAG ./src/frontend
           docker push $TAG
           echo "FRONTEND_IMAGE=$TAG" >> $GITHUB_ENV
 
-      # Build and Push Proxy Image
+      # Build and Push Proxy Image with environment-specific tags
       - name: Build and Push Proxy
         run: |
-          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/proxy:${{ github.sha }}"
+          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/proxy-${{ env.ENV_NAME }}:${{ github.sha }}"
           docker build -t $TAG ./src/proxy
           docker push $TAG
           echo "PROXY_IMAGE=$TAG" >> $GITHUB_ENV
 
-# 1. Deploy Backend
+      # 1. Deploy Backend Service
       - name: Deploy Backend
         id: deploy-backend
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: "app-portfolio-backend-dev"
+          service: "app-portfolio-backend${{ env.SERVICE_SUFFIX }}"
           image: ${{ env.BACKEND_IMAGE }}
           region: ${{ env.REGION }}
           flags: --no-allow-unauthenticated
 
-      # 2. Deploy Frontend
+      # 2. Deploy Frontend Service
       - name: Deploy Frontend
         id: deploy-frontend
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: "app-portfolio-frontend-dev"
+          service: "app-portfolio-frontend${{ env.SERVICE_SUFFIX }}"
           image: ${{ env.FRONTEND_IMAGE }}
           region: ${{ env.REGION }}
           flags: --no-allow-unauthenticated
 
-      # 3. Deploy Proxy (Receives URLs from above steps)
+      # 3. Deploy Proxy Service (Injects Backend/Frontend URLs)
       - name: Deploy Proxy
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: "app-portfolio-proxy-dev"
+          service: "app-portfolio-proxy${{ env.SERVICE_SUFFIX }}"
           image: ${{ env.PROXY_IMAGE }}
           region: ${{ env.REGION }}
           flags: "--allow-unauthenticated"
-          # Inject Backend and Frontend URLs into Proxy environment variables
+          # Inject dynamic URLs generated in previous steps into Proxy env vars
           env_vars: |
             URL_BACKEND=${{ steps.deploy-backend.outputs.url }}
             URL_FRONTEND=${{ steps.deploy-frontend.outputs.url }}
