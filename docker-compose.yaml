@@ -9,11 +9,12 @@ services:
     build:
       context: src/proxy
       dockerfile: Dockerfile
-    environment:
-      - URL_BACKEND=http://backend:8080
-      - URL_FRONTEND=http://frontend:8080
     ports:
       - ${PORT_PROXY:-8888}:8080
+    environment:
+      - ENV=local
+      - URL_BACKEND=http://backend:8080
+      - URL_FRONTEND=http://frontend:8080
     depends_on:
       backend:
         condition: service_healthy
