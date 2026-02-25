@@ -10,11 +10,12 @@ module "cloudrun_frontend" {
   source         = "../../modules/service"
   project_id     = var.project_id
   service_name   = "app-portfolio-frontend${var.env}"
-
   image          = "us-docker.pkg.dev/cloudrun/container/hello"
+  ingress        = "INGRESS_TRAFFIC_INTERNAL_ONLY"
 
-  invoker_member = var.invoker_member
-  invoker_members = var.invoker_members
+  invoker_members = [
+    "serviceAccount:${google_service_account.proxy_sa.email}"
+  ]
 }
 
 # Backend
@@ -22,11 +23,12 @@ module "cloudrun_backend" {
   source         = "../../modules/service"
   project_id     = var.project_id
   service_name   = "app-portfolio-backend${var.env}"
-
   image          = "us-docker.pkg.dev/cloudrun/container/hello"
+  ingress        = "INGRESS_TRAFFIC_INTERNAL_ONLY"
 
-  invoker_member = var.invoker_member
-  invoker_members = var.invoker_members
+  invoker_members = [
+    "serviceAccount:${google_service_account.proxy_sa.email}"
+  ]
 }
 
 resource "google_cloud_run_domain_mapping" "proxy_domain" {

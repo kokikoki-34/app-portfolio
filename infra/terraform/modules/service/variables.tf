@@ -30,6 +30,11 @@ variable "invoker_members" {
   default = []
 }
 
+variable "ingress" {
+  type = string
+  default = "INGRESS_TRAFFIC_INTERNAL_ONLY"
+}
+
 variable "service_account" {
   type    = string
   default = null
