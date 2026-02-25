@@ -29,17 +29,6 @@ module "cloudrun_backend" {
   invoker_members = var.invoker_members
 }
 
-# Proxy
-module "cloudrun_proxy" {
-  source       = "../../modules/service"
-  project_id   = var.project_id
-  service_name = "app-portfolio-proxy${var.env}"
-
-  image        = "us-docker.pkg.dev/cloudrun/container/hello"
-
-  service_account = google_service_account.proxy_sa.email
-}
-
 resource "google_cloud_run_domain_mapping" "proxy_domain" {
   location = "asia-northeast1"
   name     = var.domain_name

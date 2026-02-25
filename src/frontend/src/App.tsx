@@ -4,10 +4,11 @@ export default function App() {
   const [healthMessage, setHealthMessage] = useState<string>("Loading...");
 
   useEffect(() => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
 
     const fetchHealth = async () => {
       try {
-        const res = await fetch('/api/health');
+        const res = await fetch(API_BASE_URL + "/health");
 
         if(!res.ok){
           setHealthMessage("Error fetching health")

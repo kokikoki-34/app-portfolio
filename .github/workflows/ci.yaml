@@ -88,14 +88,6 @@ jobs:
           docker push $TAG
           echo "FRONTEND_IMAGE=$TAG" >> $GITHUB_ENV
 
-      # Build and Push Proxy Image with environment-specific tags
-      - name: Build and Push Proxy
-        run: |
-          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/proxy-${{ env.ENV_NAME }}:${{ github.sha }}"
-          docker build -t $TAG ./src/proxy
-          docker push $TAG
-          echo "PROXY_IMAGE=$TAG" >> $GITHUB_ENV
-
       # 1. Deploy Backend Service
       - name: Deploy Backend
         id: deploy-backend
@@ -115,16 +107,3 @@ jobs:
           image: ${{ env.FRONTEND_IMAGE }}
           region: ${{ env.REGION }}
           flags: --no-allow-unauthenticated
-
-      # 3. Deploy Proxy Service (Injects Backend/Frontend URLs)
-      - name: Deploy Proxy
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: "app-portfolio-proxy${{ env.SERVICE_SUFFIX }}"
-          image: ${{ env.PROXY_IMAGE }}
-          region: ${{ env.REGION }}
-          flags: "--allow-unauthenticated"
-          # Inject dynamic URLs generated in previous steps into Proxy env vars
-          env_vars: |
-            URL_BACKEND=${{ steps.deploy-backend.outputs.url }}
-            URL_FRONTEND=${{ steps.deploy-frontend.outputs.url }}
