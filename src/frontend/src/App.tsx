@@ -9,8 +9,10 @@ export default function App() {
 
     const fetchHealth = async () => {
       try {
-        const apiUrlWithPort = `${API_URL}` + (API_PORT ? `:${API_PORT}` : "");
-        const res = await fetch(apiUrlWithPort + "/health");
+        const backendUrl = new URL(API_URL);
+        if (API_PORT) backendUrl.port = API_PORT;
+
+        const res = await fetch(new URL('/health', backendUrl));
 
         if(!res.ok){
           setHealthMessage("Error fetching health")
