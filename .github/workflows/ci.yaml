@@ -83,7 +83,7 @@ jobs:
           image: ${{ env.IMAGE_TAG }}
           region: ${{ env.REGION }}
           env_vars: |
-            ALLOWED_ORIGIN=${{ needs.setup.outputs.frontend_url }}
+            URL_FRONTEND=${{ needs.setup.outputs.frontend_url }}
 
   deploy-frontend:
     needs: setup
