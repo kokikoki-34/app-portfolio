@@ -10,33 +10,39 @@ import (
 	"syscall"
 	"time"
 
+	"portfolio/internal/api"
 	"portfolio/internal/api/handler"
+	"portfolio/internal/infra"
 )
 
 func main() {
+	// Contexts
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	config := infra.LoadConfig()
+	mux := http.NewServeMux()
+
+	// Default Settings
 	slog.SetDefault(logger)
 
-	mux := http.NewServeMux()
+	// DI
 	healthHandler := handler.NewHealthHandler(logger)
-	mux.HandleFunc("GET /api/health", healthHandler.Check)
 
-	portEnv := os.Getenv("PORT")
-	if portEnv == "" {
-		portEnv = "8080"
-	}
-	port := ":" + portEnv
+	// Routing
+	mux.HandleFunc("GET /health", healthHandler.Check)
 
+	// HTTP server
+	corsHandler := api.EnableCORS(mux, config.AllowedOrigin)
 	server := &http.Server{
-		Addr:    port,
-		Handler: mux,
+		Addr:    ":" +config.PortBackend,
+		Handler: corsHandler,
 	}
 
+	// Graceful shutdown
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	go func() {
-		logger.Info("server starting", "port", port)
+		logger.Info("server starting", "port", config.PortBackend)
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("server failed to start", "error", err)
 			os.Exit(1)

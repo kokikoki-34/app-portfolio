@@ -9,7 +9,7 @@ import (
 // When using distro-less container image, cannot use curl or wget.
 // This binary enable health check.
 func main() {
-	resp, err := http.Get("http://localhost:8080/api/health")
+	resp, err := http.Get("http://localhost:8080/health")
 	if err != nil || resp.StatusCode != http.StatusOK {
 		os.Exit(1)
 	}

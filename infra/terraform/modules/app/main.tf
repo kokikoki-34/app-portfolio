@@ -11,11 +11,6 @@ module "cloudrun_frontend" {
   project_id     = var.project_id
   service_name   = "app-portfolio-frontend${var.env}"
   image          = "us-docker.pkg.dev/cloudrun/container/hello"
-  ingress        = "INGRESS_TRAFFIC_INTERNAL_ONLY"
-
-  invoker_members = [
-    "serviceAccount:${google_service_account.proxy_sa.email}"
-  ]
 }
 
 # Backend
@@ -24,34 +19,4 @@ module "cloudrun_backend" {
   project_id     = var.project_id
   service_name   = "app-portfolio-backend${var.env}"
   image          = "us-docker.pkg.dev/cloudrun/container/hello"
-  ingress        = "INGRESS_TRAFFIC_INTERNAL_ONLY"
-
-  invoker_members = [
-    "serviceAccount:${google_service_account.proxy_sa.email}"
-  ]
-}
-
-# Proxy
-module "cloudrun_proxy" {
-  source       = "../../modules/service"
-  project_id   = var.project_id
-  service_name = "app-portfolio-proxy${var.env}"
-  image        = "us-docker.pkg.dev/cloudrun/container/hello"
-  service_account = google_service_account.proxy_sa.email
-  ingress      = "INGRESS_TRAFFIC_ALL"
-
-  invoker_members = ["allUsers"]
-}
-
-resource "google_cloud_run_domain_mapping" "proxy_domain" {
-  location = "asia-northeast1"
-  name     = var.domain_name
-
-  metadata {
-    namespace = var.project_id
-  }
-
-  spec {
-    route_name = module.cloudrun_proxy.service_name
-  }
 }
