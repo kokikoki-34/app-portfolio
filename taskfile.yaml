@@ -13,9 +13,6 @@ includes:
   container:frontend:
     taskfile: ./tasks/frontend/container.yaml
 
-  container:proxy:
-    taskfile: ./tasks/proxy/container.yaml
-
 tasks:
   default:
     desc: List available tasks

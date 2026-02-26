@@ -3,6 +3,12 @@
 # ==========================================
 FROM node:lts-alpine3.22 AS builder
 
+ARG VITE_URL_BACKEND
+ARG VITE_PORT_BACKEND
+
+ENV VITE_URL_BACKEND=$VITE_URL_BACKEND
+ENV VITE_PORT_BACKEND=$VITE_PORT_BACKEND
+
 WORKDIR /app
 
 COPY package.json package-lock.json* ./

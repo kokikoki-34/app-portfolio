@@ -16,17 +16,17 @@ resource "google_cloud_run_v2_service" "default" {
     ignore_changes = [
       template[0].containers[0].image,
       client,
-      client_version
+      client_version,
+      annotations["run.googleapis.com/client-name"],
+      annotations["run.googleapis.com/client-version"]
     ]
   }
 }
 
 resource "google_cloud_run_v2_service_iam_member" "invoker" {
-  for_each = toset(var.invoker_members)
-
   project  = google_cloud_run_v2_service.default.project
   location = google_cloud_run_v2_service.default.location
   name     = google_cloud_run_v2_service.default.name
   role     = "roles/run.invoker"
-  member   = each.value
+  member   = "allUsers"
 }
