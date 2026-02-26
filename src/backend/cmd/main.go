@@ -16,10 +16,13 @@ import (
 )
 
 func main() {
-	// Dependency
+	// Contexts
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	config := infra.LoadConfig()
 	mux := http.NewServeMux()
+
+	// Default Settings
+	slog.SetDefault(logger)
 
 	// DI
 	healthHandler := handler.NewHealthHandler(logger)
@@ -28,7 +31,7 @@ func main() {
 	mux.HandleFunc("GET /health", healthHandler.Check)
 
 	// HTTP server
-	corsHandler := api.EnableCORS(mux, config.HostFrontend + ":" + config.PortFrontend)
+	corsHandler := api.EnableCORS(mux, config.AllowedOrigin)
 	server := &http.Server{
 		Addr:    ":" +config.PortBackend,
 		Handler: corsHandler,

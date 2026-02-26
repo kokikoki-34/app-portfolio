@@ -12,9 +12,9 @@ services:
     ports:
       - ${PORT_BACKEND:-8000}:8080
     environment:
-      - PORT_FRONTEND=${PORT_FRONTEND:-5173}
-      - HOST_BACKEND=${HOST_BACKEND:-localhost}
-      - HOST_FRONTEND=${HOST_FRONTEND:-localhost}
+      - PORT_FRONTEND=${PORT_FRONTEND:-3000}
+      - URL_BACKEND=${URL_BACKEND:-http://localhost}
+      - URL_FRONTEND=${URL_FRONTEND:-http://localhost}
     healthcheck:
       test: ["CMD", "/healthcheck"]
       interval: 30s
@@ -30,7 +30,8 @@ services:
       context: src/frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=${VITE_API_URL:-http://localhost:8000}
+        - VITE_URL_BACKEND=${URL_BACKEND:-http://localhost}
+        - VITE_PORT_BACKEND=${PORT_BACKEND:-8000}
     ports:
       - ${PORT_FRONTEND:-3000}:8080
     healthcheck:
