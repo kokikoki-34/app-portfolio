@@ -5,10 +5,10 @@ tasks:
     desc: Build the frontend for production
     dir: "{{.ROOT_DIR}}/src/frontend"
     cmds:
-    - cmd: docker build -t app-frontend .
+    - cmd: docker build -t app-portfolio-frontend .
 
   run:
     desc: Run the frontend development server
     dir: "{{.ROOT_DIR}}/src/frontend"
     cmds:
-    - cmd: docker run -p {{.PORT_FRONTEND}}:8080 app-frontend
+    - cmd: docker run -p {{.PORT_FRONTEND}}:8080 app-portfolio-frontend
