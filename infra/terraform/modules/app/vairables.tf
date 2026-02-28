@@ -1,25 +1,20 @@
-variable "env" {
-  type = string
-  description = "Environment (Main or Dev)"
-  default = ""
-}
-
-variable "domain_name" {
-  type = string
-}
-
-variable "invoker_member" {
+variable "project_id" {
   type        = string
-  description = "Member to grant invoker role"
-  default     = null
+  description = "GCP Project ID"
 }
 
-variable "invoker_members" {
-  type    = list(string)
-  default = []
+variable "region" {
+  type        = string
+  default     = "asia-northeast1"
+  description = "Default GCP region"
 }
 
-variable "project_id"{
-  type    =  string
-  default = "app-portfolio-488310"
+variable "env" {
+  type =  string
+  default = ""
+  description = "Environment"
+}
+
+variable "subnet_cidr_range" {
+  type = string
 }
