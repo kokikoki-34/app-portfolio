@@ -1,0 +1,19 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [ "main", "develop"]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/job_ci.yaml
+    secrets: inherit
+
+  push:
+    needs: [ ci ]
+    uses: ./.github/workflows/job_deploy.yaml
+    secrets: inherit

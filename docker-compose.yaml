@@ -3,6 +3,26 @@ name: app-portfolio
 
 services:
   # ---------------------------------------------------------
+  # IAM Authorization Proxy
+  # ---------------------------------------------------------
+  proxy:
+    build:
+      context: src/proxy
+      dockerfile: Dockerfile
+    environment:
+      - URL_BACKEND=http://backend
+      - PORT_BACKEND=8080
+      - URL_FRONTEND=http://frontend
+      - PORT_FRONTEND=8080
+    ports:
+      - ${PORT_PROXY}:8080
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+
+  # ---------------------------------------------------------
   # Go Backend API
   # ---------------------------------------------------------
   backend:
@@ -10,11 +30,7 @@ services:
       context: src/backend
       dockerfile: Dockerfile
     ports:
-      - ${PORT_BACKEND:-8000}:8080
-    environment:
-      - PORT_FRONTEND=${PORT_FRONTEND:-3000}
-      - URL_BACKEND=${URL_BACKEND:-http://localhost}
-      - URL_FRONTEND=${URL_FRONTEND:-http://localhost}
+      - ${PORT_BACKEND}:8080
     healthcheck:
       test: ["CMD", "/healthcheck"]
       interval: 30s
@@ -29,11 +45,8 @@ services:
     build:
       context: src/frontend
       dockerfile: Dockerfile
-      args:
-        - VITE_URL_BACKEND=${URL_BACKEND:-http://localhost}
-        - VITE_PORT_BACKEND=${PORT_BACKEND:-8000}
     ports:
-      - ${PORT_FRONTEND:-3000}:8080
+      - ${PORT_FRONTEND}:8080
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080"]
       interval: 30s
