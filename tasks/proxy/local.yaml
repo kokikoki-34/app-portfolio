@@ -15,4 +15,4 @@ tasks:
       PORT: '{{default "8081" .PORT}}'
     cmds:
       - task: build
-      - PORT={{.PORT_BACKEND}} ./bin/api
+      - PORT={{.PORT_PROXY}} ./bin/api
