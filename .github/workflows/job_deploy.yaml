@@ -9,9 +9,8 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: asia-northeast1
   GAR_LOCATION: asia-northeast1
-  ENV_SUFFIX: ${{ github.ref_name == 'main' && '' || '-dev' }}
-  REPOSITORY: app-portfolio-repo${{ github.ref_name == 'main' && '' || '-dev' }}
-
+  ENV_SUFFIX: ${{ github.ref_name != 'main' && '-dev' || '' }}
+  REPOSITORY: app-portfolio-repo${{ github.ref_name != 'main' && '-dev' || '' }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
