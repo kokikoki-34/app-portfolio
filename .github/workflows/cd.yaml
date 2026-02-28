@@ -13,4 +13,5 @@ jobs:
     uses: ./.github/workflows/job_ci.yaml
 
   push:
+    needs: [ ci ]
     uses: ./.github/workflows/job_deploy.yaml
