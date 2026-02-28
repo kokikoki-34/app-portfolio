@@ -27,15 +27,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check Secret Presence
-        run: |
-          if [ -z "${{ secrets.GCP_WIF_PROVIDER }}" ]; then
-            echo "❌ GCP_WIF_PROVIDER is EMPTY"
-            exit 1
-          else
-            echo "✅ GCP_WIF_PROVIDER is detected"
-          fi
-
       - name: Google Auth
         uses: google-github-actions/auth@v2
         with:
