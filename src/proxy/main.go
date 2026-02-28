@@ -17,7 +17,7 @@ import (
 func main() {
 	// Contexts
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	config := infra.LoadConfig()
+	config := infra.LoadConfig(logger)
 
 	// Default Settings
 	slog.SetDefault(logger)

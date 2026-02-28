@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"log/slog"
 	"os"
 )
 
@@ -12,27 +13,29 @@ type Config struct{
 	PortFrontend string
 }
 
-func LoadConfig() *Config {
-	portProxy := os.Getenv("PORT_PROXY")
-	if portProxy == "" { portProxy = "8080" }
+func LoadConfig(logger *slog.Logger) *Config {
+    portProxy := os.Getenv("PORT_PROXY")
+    if portProxy == "" {
+        portProxy = os.Getenv("PORT")
+        if portProxy == "" {
+            portProxy = "8080"
+        }
+    }
 
-	urlBackend := os.Getenv("URL_BACKEND")
-	if urlBackend == "" { urlBackend = "http://localhost" }
+    cfg := &Config{
+        PortProxy:    portProxy,
+        URLBackend:   os.Getenv("URL_BACKEND"),
+        PortBackend:  os.Getenv("PORT_BACKEND"),
+        URLFrontend:  os.Getenv("URL_FRONTEND"),
+        PortFrontend: os.Getenv("PORT_FRONTEND"),
+    }
 
-	portBackend := os.Getenv("PORT_BACKEND")
-	if portBackend == "" { portBackend = "8082" }
+    if cfg.URLBackend == "" {
+        logger.Error("Environment variable URL_BACKEND is required")
+    }
+    if cfg.URLFrontend == "" {
+        logger.Error("Environment variable URL_FRONTEND is required")
+    }
 
-	urlFrontend := os.Getenv("URL_FRONTEND")
-	if urlFrontend == "" { urlFrontend = "http://localhost" }
-
-	portFrontend := os.Getenv("PORT_FRONTEND")
-	if portFrontend == "" { portFrontend = "8083" }
-
-	return &Config{
-		PortProxy: portProxy,
-		URLBackend: urlBackend,
-		PortBackend: portBackend,
-		URLFrontend: urlFrontend,
-		PortFrontend: portFrontend,
-	}
+    return cfg
 }
