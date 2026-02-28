@@ -15,6 +15,31 @@ resource "google_artifact_registry_repository" "portfolio_repo" {
 }
 
 # ---------------------------------------------------------
+# IAM Policies (Resource-level)
+# ---------------------------------------------------------
+
+resource "google_cloud_run_v2_service_iam_member" "proxy_public_access" {
+  name     = google_cloud_run_v2_service.proxy.name
+  location = google_cloud_run_v2_service.proxy.location
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+resource "google_cloud_run_v2_service_iam_member" "backend_invoker" {
+  name     = google_cloud_run_v2_service.backend.name
+  location = google_cloud_run_v2_service.backend.location
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.cloudrun_sa.email}"
+}
+
+resource "google_cloud_run_v2_service_iam_member" "frontend_invoker" {
+  name     = google_cloud_run_v2_service.frontend.name
+  location = google_cloud_run_v2_service.frontend.location
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.cloudrun_sa.email}"
+}
+
+# ---------------------------------------------------------
 # Network (Direct VPC Egress)
 # ---------------------------------------------------------
 resource "google_compute_network" "vpc_network" {
@@ -112,31 +137,20 @@ resource "google_cloud_run_v2_service" "proxy" {
   }
 }
 
-# ... (以前の Service Account, Network, Cloud Run Services の定義はそのまま) ...
-
 # ---------------------------------------------------------
-# IAM Policies (Resource-level)
+# Cloud Run Domain Mapping
 # ---------------------------------------------------------
+resource "google_cloud_run_domain_mapping" "proxy_domain" {
+  location = var.region
+  name     = var.domain
 
-resource "google_cloud_run_v2_service_iam_member" "proxy_public_access" {
-  name     = google_cloud_run_v2_service.proxy.name
-  location = google_cloud_run_v2_service.proxy.location
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
+  metadata {
+    namespace = var.project_id
+  }
 
-resource "google_cloud_run_v2_service_iam_member" "backend_invoker" {
-  name     = google_cloud_run_v2_service.backend.name
-  location = google_cloud_run_v2_service.backend.location
-  role     = "roles/run.invoker"
-  member   = "serviceAccount:${google_service_account.cloudrun_sa.email}"
-}
-
-resource "google_cloud_run_v2_service_iam_member" "frontend_invoker" {
-  name     = google_cloud_run_v2_service.frontend.name
-  location = google_cloud_run_v2_service.frontend.location
-  role     = "roles/run.invoker"
-  member   = "serviceAccount:${google_service_account.cloudrun_sa.email}"
+  spec {
+    route_name = google_cloud_run_v2_service.proxy.name
+  }
 }
 
 # ---------------------------------------------------------
