@@ -11,7 +11,9 @@ permissions:
 jobs:
   ci:
     uses: ./.github/workflows/job_ci.yaml
+    secrets: inherit
 
   push:
     needs: [ ci ]
     uses: ./.github/workflows/job_deploy.yaml
+    secrets: inherit
