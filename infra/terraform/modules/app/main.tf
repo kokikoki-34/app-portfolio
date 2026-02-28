@@ -8,6 +8,12 @@ resource "google_service_account" "cloudrun_sa" {
   display_name = "Service Account for Portfolio App Cloud Run (${var.env})"
 }
 
+resource "google_artifact_registry_repository" "portfolio_repo" {
+  location      = var.region
+  repository_id = "app-portfolio-repo${var.env}"
+  format        = "DOCKER"
+}
+
 # ---------------------------------------------------------
 # Network (Direct VPC Egress)
 # ---------------------------------------------------------
