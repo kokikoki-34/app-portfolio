@@ -10,29 +10,39 @@ import (
 	"syscall"
 	"time"
 
-	"portfolio/internal/api/handler"
-	"portfolio/internal/infra"
+	"proxy/internal/handler"
+	"proxy/internal/infra"
 )
 
 func main() {
 	// Contexts
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	config := infra.LoadConfig()
-	mux := http.NewServeMux()
 
 	// Default Settings
 	slog.SetDefault(logger)
 
-	// DI
-	healthHandler := handler.NewHealthHandler(logger)
+	// GCP tokenID provider
+	gcpTokenProvider := infra.GetNewGCPTokenProvider(logger, context.Background())
 
-	// Routing
-	mux.HandleFunc("GET /api/health", healthHandler.Check)
+	// Proxy (Backend)
+	urlBackend := config.URLBackend
+	if config.PortBackend != "" {
+		urlBackend += ":" + config.PortBackend
+	}
+	handlerBackend := handler.NewReverseProxyHandler(logger, gcpTokenProvider, urlBackend)
+	http.HandleFunc("/api/", handlerBackend.ServeHTTP)
 
-	// HTTP server
+	// Proxy (Frontend)
+	urlFrontend := config.URLFrontend
+	if config.PortFrontend != "" {
+		urlFrontend += ":" + config.PortFrontend
+	}
+	handlerFrontend := handler.NewReverseProxyHandler(logger, gcpTokenProvider, urlFrontend)
+	http.HandleFunc("/", handlerFrontend.ServeHTTP)
+
 	server := &http.Server{
-		Addr:    ":" + "8080",
-		Handler: mux,
+		Addr:    ":" +config.PortProxy,
 	}
 
 	// Graceful shutdown
@@ -40,7 +50,7 @@ func main() {
 	defer stop()
 
 	go func() {
-		logger.Info("server starting", "port", config.PortBackend)
+		logger.Info("server starting", "port", server.Addr)
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("server failed to start", "error", err)
 			os.Exit(1)

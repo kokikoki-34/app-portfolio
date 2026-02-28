@@ -1,8 +1,6 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
 
@@ -11,109 +9,5 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-test:
-    name: Build & Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Task
-        uses: go-task/setup-task@v1
-        with:
-          version: 3.x
-      - name: Build Images (Check)
-        run: task build
-      - name: Run Tests
-        run: task -t ./infra/ci/taskfile.yaml ci-test
-      - name: Tear Down
-        run: task clean
-
-  setup:
-    name: Setup Environment
-    needs: build-and-test
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    outputs:
-      env_name: ${{ steps.set-vars.outputs.env_name }}
-      service_suffix: ${{ steps.set-vars.outputs.service_suffix }}
-      backend_url: ${{ steps.set-vars.outputs.backend_url }}
-      frontend_url: ${{ steps.set-vars.outputs.frontend_url }}
-    steps:
-      - id: set-vars
-        run: |
-          if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "env_name=main" >> $GITHUB_OUTPUT
-            echo "service_suffix=" >> $GITHUB_OUTPUT
-            echo "backend_url=https://api.kokiyasui.com" >> $GITHUB_OUTPUT
-            echo "frontend_url=https://www.kokiyasui.com" >> $GITHUB_OUTPUT
-          else
-            echo "env_name=dev" >> $GITHUB_OUTPUT
-            echo "service_suffix=-dev" >> $GITHUB_OUTPUT
-            echo "backend_url=https://dev-api.kokiyasui.com" >> $GITHUB_OUTPUT
-            echo "frontend_url=https://dev.kokiyasui.com" >> $GITHUB_OUTPUT
-          fi
-
-  deploy-backend:
-    needs: setup
-    runs-on: ubuntu-latest
-    environment: ${{ needs.setup.outputs.env_name == 'main' && 'production' || 'development' }}
-    env:
-      PROJECT_ID: "app-portfolio-488310"
-      REGION: "asia-northeast1"
-      REPOSITORY: "app-repo"
-      GAR_LOCATION: "asia-northeast1"
-    steps:
-      - uses: actions/checkout@v4
-      - id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: "projects/442469161656/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
-          service_account: "github-actions-deployer@app-portfolio-488310.iam.gserviceaccount.com"
-      - name: Docker Auth
-        run: gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
-      - name: Build and Push Backend
-        run: |
-          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/backend-${{ needs.setup.outputs.env_name }}:${{ github.sha }}"
-          docker build -t $TAG ./src/backend
-          docker push $TAG
-          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: "app-portfolio-backend${{ needs.setup.outputs.service_suffix }}"
-          image: ${{ env.IMAGE_TAG }}
-          region: ${{ env.REGION }}
-          env_vars: |
-            URL_FRONTEND=${{ needs.setup.outputs.frontend_url }}
-
-  deploy-frontend:
-    needs: setup
-    runs-on: ubuntu-latest
-    environment: ${{ needs.setup.outputs.env_name == 'main' && 'production' || 'development' }}
-    env:
-      PROJECT_ID: "app-portfolio-488310"
-      REGION: "asia-northeast1"
-      REPOSITORY: "app-repo"
-      GAR_LOCATION: "asia-northeast1"
-    steps:
-      - uses: actions/checkout@v4
-      - id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: "projects/442469161656/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
-          service_account: "github-actions-deployer@app-portfolio-488310.iam.gserviceaccount.com"
-      - name: Docker Auth
-        run: gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
-      - name: Build and Push Frontend
-        run: |
-          TAG="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/frontend-${{ needs.setup.outputs.env_name }}:${{ github.sha }}"
-          docker build -t $TAG \
-            --build-arg VITE_URL_BACKEND=${{ needs.setup.outputs.backend_url }} \
-            ./src/frontend
-          docker push $TAG
-          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: "app-portfolio-frontend${{ needs.setup.outputs.service_suffix }}"
-          image: ${{ env.IMAGE_TAG }}
-          region: ${{ env.REGION }}
+  test:
+    uses: ./.github/workflows/job_ci.yaml

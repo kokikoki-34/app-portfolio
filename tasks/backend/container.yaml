@@ -5,10 +5,10 @@ tasks:
     desc: Build the container image.
     dir: "{{.ROOT_DIR}}/src/backend"
     cmds:
-    - cmd: docker build -t app-backend .
+    - cmd: docker build -t app-portfolio-backend .
 
   run:
     desc: Run the server in Container.
     dir: "{{.ROOT_DIR}}/src/backend"
     cmds:
-    - cmd: docker run -p {{.PORT_BACKEND}}:8080 app-backend
+    - cmd: docker run -p {{.PORT_BACKEND}}:8080 app-portfolio-backend
