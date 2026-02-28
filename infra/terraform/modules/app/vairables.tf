@@ -4,10 +4,20 @@ variable "region" {
   description = "Default GCP region"
 }
 
+variable "project_id" {
+  type        = string
+  description = "GCP Project ID"
+}
+
 variable "env" {
-  type =  string
-  default = ""
+  type        =  string
+  default     = ""
   description = "Environment"
+}
+
+variable "domain" {
+  type        = string
+  description = "Custom domain for endpoint"
 }
 
 variable "subnet_cidr_range" {
