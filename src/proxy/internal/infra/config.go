@@ -16,9 +16,9 @@ type Config struct{
 }
 
 func LoadConfig(logger *slog.Logger) (*Config, error) {
-	hostAllowed := os.Getenv("DOMAIN_ALLOWED")
+	hostAllowed := os.Getenv("HOST_ALLOWED")
 	if hostAllowed == "" {
-		hostAllowed = "http://localhost"
+		hostAllowed = "localhost"
 	}
 
     port := os.Getenv("PORT_PROXY")
@@ -51,6 +51,9 @@ func LoadConfig(logger *slog.Logger) (*Config, error) {
 
 func loadURL(envURL string, envPort string) (*url.URL, error){
 	rawURL := os.Getenv(envURL)
+	if rawURL == "" {
+        return nil, fmt.Errorf("environment variable %s is required but not set", envURL)
+    }
 	port := os.Getenv(envPort)
 
 	parsedURL, err := url.Parse(rawURL)

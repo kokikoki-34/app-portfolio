@@ -49,8 +49,11 @@ jobs:
         run: |
           B_URL=$(gcloud run services describe app-portfolio-backend${{ env.ENV_SUFFIX }} --region ${{ env.REGION }} --format 'value(status.url)')
           F_URL=$(gcloud run services describe app-portfolio-frontend${{ env.ENV_SUFFIX }} --region ${{ env.REGION }} --format 'value(status.url)')
+          H_ALLOWED=$(gcloud beta run domain-mappings list --filter="spec.routeName=app-portfolio-proxy${{ env.ENV_SUFFIX }}" --region ${{ env.REGION }} --format="value(metadata.name)")
+
           echo "backend_url=$B_URL" >> $GITHUB_OUTPUT
           echo "frontend_url=$F_URL" >> $GITHUB_OUTPUT
+          echo "host_allowed=$H_ALLOWED" >> $GITHUB_OUTPUT
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
@@ -59,4 +62,6 @@ jobs:
           region: ${{ env.REGION }}
           image: ${{ env.IMAGE_URL }}
           env_vars: |-
-            ${{ matrix.service == 'proxy' && format('URL_BACKEND={0},URL_FRONTEND={1}', steps.fetch-urls.outputs.backend_url, steps.fetch-urls.outputs.frontend_url) || '' }}
+            ${{ matrix.service == 'proxy' && format('HOST_ALLOWED={0}', steps.fetch-urls.outputs.host_allowed) || '' }}
+            ${{ matrix.service == 'proxy' &&format('URL_BACKEND={0}', steps.fetch-urls.outputs.backend_url) || '' }}
+            ${{ matrix.service == 'proxy' &&format('URL_FRONTEND={0}', steps.fetch-urls.outputs.frontend_url) || '' }}
