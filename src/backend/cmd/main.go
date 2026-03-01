@@ -40,7 +40,7 @@ func main() {
 	defer stop()
 
 	go func() {
-		logger.Info("server starting", "port", config.PortBackend)
+		logger.Info("server starting", "port", config.Port)
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("server failed to start", "error", err)
 			os.Exit(1)
