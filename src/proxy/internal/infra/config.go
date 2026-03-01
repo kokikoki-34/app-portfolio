@@ -1,41 +1,69 @@
 package infra
 
 import (
+	"fmt"
 	"log/slog"
+	"net"
+	"net/url"
 	"os"
 )
 
 type Config struct{
-	PortProxy string
-	URLBackend string
-	PortBackend string
-	URLFrontend string
-	PortFrontend string
+	HostAllowed string
+	Port string
+	URLBackend *url.URL
+	URLFrontend *url.URL
 }
 
-func LoadConfig(logger *slog.Logger) *Config {
-    portProxy := os.Getenv("PORT_PROXY")
-    if portProxy == "" {
-        portProxy = os.Getenv("PORT")
-        if portProxy == "" {
-            portProxy = "8080"
+func LoadConfig(logger *slog.Logger) (*Config, error) {
+	hostAllowed := os.Getenv("HOST_ALLOWED")
+	if hostAllowed == "" {
+		hostAllowed = "localhost"
+	}
+
+    port := os.Getenv("PORT_PROXY")
+    if port == "" {
+        port = os.Getenv("PORT")
+        if port == "" {
+            port = "8080"
         }
     }
 
+	urlBackend, err := loadURL("URL_BACKEND", "PORT_BACKEND")
+	if err != nil {
+		return nil, fmt.Errorf("failed to load backend URL: %w", err)
+	}
+
+	urlFrontend, err := loadURL("URL_FRONTEND", "PORT_FRONTEND")
+	if err != nil {
+		return nil, fmt.Errorf("failed to load frontend URL: %w", err)
+	}
+
     cfg := &Config{
-        PortProxy:    portProxy,
-        URLBackend:   os.Getenv("URL_BACKEND"),
-        PortBackend:  os.Getenv("PORT_BACKEND"),
-        URLFrontend:  os.Getenv("URL_FRONTEND"),
-        PortFrontend: os.Getenv("PORT_FRONTEND"),
+		HostAllowed: hostAllowed,
+        Port:        port,
+        URLBackend:  urlBackend,
+        URLFrontend: urlFrontend,
     }
 
-    if cfg.URLBackend == "" {
-        logger.Error("Environment variable URL_BACKEND is required")
-    }
-    if cfg.URLFrontend == "" {
-        logger.Error("Environment variable URL_FRONTEND is required")
-    }
+    return cfg, err
+}
 
-    return cfg
+func loadURL(envURL string, envPort string) (*url.URL, error){
+	rawURL := os.Getenv(envURL)
+	if rawURL == "" {
+        return nil, fmt.Errorf("environment variable %s is required but not set", envURL)
+    }
+	port := os.Getenv(envPort)
+
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		return nil, err
+	}
+
+	if port != "" {
+		parsedURL.Host = net.JoinHostPort(parsedURL.Hostname(), port)
+	}
+
+	return parsedURL, nil
 }

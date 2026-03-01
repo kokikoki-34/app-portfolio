@@ -13,7 +13,7 @@ type GCPTokenProvider struct{
 	ctx context.Context
 }
 
-func GetNewGCPTokenProvider(logger *slog.Logger, ctx context.Context) *GCPTokenProvider{
+func NewGCPTokenProvider(logger *slog.Logger, ctx context.Context) *GCPTokenProvider{
 	return &GCPTokenProvider{ctx: ctx,logger: logger}
 }
 

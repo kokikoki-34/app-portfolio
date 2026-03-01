@@ -15,45 +15,63 @@ import (
 )
 
 func main() {
-	// Contexts
+	// -------------------------------------------------------------------------
+	// Dependency
+	// -------------------------------------------------------------------------
+	// Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	config := infra.LoadConfig(logger)
-
-	// Default Settings
 	slog.SetDefault(logger)
 
-	// GCP tokenID provider
-	gcpTokenProvider := infra.GetNewGCPTokenProvider(logger, context.Background())
-
-	// Proxy (Backend)
-	urlBackend := config.URLBackend
-	if config.PortBackend != "" {
-		urlBackend += ":" + config.PortBackend
-	}
-	handlerBackend := handler.NewReverseProxyHandler(logger, gcpTokenProvider, urlBackend)
-	http.HandleFunc("/api/", handlerBackend.ServeHTTP)
-
-	// Proxy (Frontend)
-	urlFrontend := config.URLFrontend
-	if config.PortFrontend != "" {
-		urlFrontend += ":" + config.PortFrontend
-	}
-	handlerFrontend := handler.NewReverseProxyHandler(logger, gcpTokenProvider, urlFrontend)
-	http.HandleFunc("/", handlerFrontend.ServeHTTP)
-
-	server := &http.Server{
-		Addr:    ":" +config.PortProxy,
+	ctx := context.Background()
+	mux := http.NewServeMux()
+	config, err := infra.LoadConfig(logger)
+	if err != nil {
+		logger.Error("failed to load config", "error", err)
+		os.Exit(1)
 	}
 
-	// Graceful shutdown
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
+    defer stop()
+	gcpTokenProvider := infra.NewGCPTokenProvider(logger, ctx)
 
+	// -------------------------------------------------------------------------
+	// Create Handlers
+	// -------------------------------------------------------------------------
+	handlerBackend := handler.NewReverseProxyHandler(logger, gcpTokenProvider, config.URLBackend)
+	handlerFrontend := handler.NewReverseProxyHandler(logger, gcpTokenProvider, config.URLFrontend)
+
+	// -------------------------------------------------------------------------
+	// Routing
+	// -------------------------------------------------------------------------
+	mux.HandleFunc("/api/", handlerBackend.ServeHTTP)
+	mux.HandleFunc("/", handlerFrontend.ServeHTTP)
+
+	// -------------------------------------------------------------------------
+	// Middleware to guard hosts
+	// -------------------------------------------------------------------------
+	allowedHosts := []string{"localhost", "127.0.0.1", config.HostAllowed}
+	hostGuardHandler := handler.NewHostGuardHandler(logger, mux, allowedHosts)
+
+	// -------------------------------------------------------------------------
+	// Run Server
+	// -------------------------------------------------------------------------
+	server := &http.Server{
+		Addr:    ":" + config.Port,
+		Handler: hostGuardHandler,
+	}
+
+	if err := run(logger, ctx, stop, server); err != nil {
+		logger.Error("server failed", "error", err)
+		os.Exit(1)
+	}
+}
+
+func run(logger *slog.Logger, ctx context.Context, stop context.CancelFunc, server*http.Server) error {
 	go func() {
 		logger.Info("server starting", "port", server.Addr)
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("server failed to start", "error", err)
-			os.Exit(1)
+			stop()
 		}
 	}()
 
@@ -64,9 +82,9 @@ func main() {
 	defer cancel()
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		logger.Error("server forced to shutdown", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	logger.Info("server stopped completely")
+	return nil
 }

@@ -3,18 +3,18 @@ package infra
 import "os"
 
 type Config struct{
-	PortBackend string
+	Port string
 }
 
 func LoadConfig() *Config {
-	portBackend := os.Getenv("PORT_BACKEND")
+	port := os.Getenv("PORT_BACKEND")
 
-    if portBackend == "" {
-        portBackend = os.Getenv("PORT")
-        if portBackend == "" {
-            portBackend = "8080"
+    if port == "" {
+        port = os.Getenv("PORT")
+        if port == "" {
+            port = "8080"
         }
     }
 
-	return &Config{PortBackend: portBackend}
+	return &Config{Port: port}
 }

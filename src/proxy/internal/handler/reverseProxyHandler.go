@@ -19,8 +19,8 @@ type ReverseProxyHandler struct{
 	proxy *httputil.ReverseProxy
 }
 
-func NewReverseProxyHandler(logger *slog.Logger, tp tokenProvider, urlTarget string) *ReverseProxyHandler {
-	urlParsed, err := url.Parse(urlTarget)
+func NewReverseProxyHandler(logger *slog.Logger, tp tokenProvider, urlTarget *url.URL) *ReverseProxyHandler {
+	urlParsed, err := url.Parse(urlTarget.String())
 	if err != nil {
 		logger.Error("Failed to parse URL at initialization", "url", urlParsed, "error", err)
 		panic(err)
@@ -28,7 +28,7 @@ func NewReverseProxyHandler(logger *slog.Logger, tp tokenProvider, urlTarget str
 
 	var ts oauth2.TokenSource
 	if tp != nil {
-		ts = tp.GetTokenSource(urlTarget)
+		ts = tp.GetTokenSource(urlTarget.String())
 	}
 
 	baseTransport, ok := http.DefaultTransport.(*http.Transport)
