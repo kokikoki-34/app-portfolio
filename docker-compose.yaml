@@ -9,11 +9,16 @@ services:
     build:
       context: src/proxy
       dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.local
+        required: false
     environment:
-      - URL_BACKEND=http://backend
-      - PORT_BACKEND=8080
-      - URL_FRONTEND=http://frontend
-      - PORT_FRONTEND=8080
+      URL_BACKEND: http://backend
+      PORT_BACKEND: 8080
+      URL_FRONTEND: http://frontend
+      PORT_FRONTEND: 8080
     ports:
       - ${PORT_PROXY}:8080
     depends_on:
@@ -29,8 +34,18 @@ services:
     build:
       context: src/backend
       dockerfile: Dockerfile
+    env_file:
+    - path: .env
+      required: true
+    - path: .env.local
+      required: false
+    environment:
+      CONNECTION_STRING: ${CONNECTION_STRING}
     ports:
       - ${PORT_BACKEND}:8080
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "/healthcheck"]
       interval: 30s
@@ -45,6 +60,11 @@ services:
     build:
       context: src/frontend
       dockerfile: Dockerfile
+    env_file:
+    - path: .env
+      required: true
+    - path: .env.local
+      required: false
     ports:
       - ${PORT_FRONTEND}:8080
     healthcheck:
@@ -53,3 +73,32 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
+
+  db:
+    build:
+      context: .
+      dockerfile: infra/db/Dockerfile
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.local
+        required: false
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Tokyo
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./src/backend/db/schema:/docker-entrypoint-initdb.d:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  postgres_data:

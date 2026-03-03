@@ -8,10 +8,10 @@ import (
 	"os"
 )
 
-type Config struct{
+type Config struct {
 	HostAllowed string
-	Port string
-	URLBackend *url.URL
+	Port        string
+	URLBackend  *url.URL
 	URLFrontend *url.URL
 }
 
@@ -21,13 +21,10 @@ func LoadConfig(logger *slog.Logger) (*Config, error) {
 		hostAllowed = "localhost"
 	}
 
-    port := os.Getenv("PORT_PROXY")
-    if port == "" {
-        port = os.Getenv("PORT")
-        if port == "" {
-            port = "8080"
-        }
-    }
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
 	urlBackend, err := loadURL("URL_BACKEND", "PORT_BACKEND")
 	if err != nil {
@@ -39,21 +36,21 @@ func LoadConfig(logger *slog.Logger) (*Config, error) {
 		return nil, fmt.Errorf("failed to load frontend URL: %w", err)
 	}
 
-    cfg := &Config{
+	cfg := &Config{
 		HostAllowed: hostAllowed,
-        Port:        port,
-        URLBackend:  urlBackend,
-        URLFrontend: urlFrontend,
-    }
+		Port:        port,
+		URLBackend:  urlBackend,
+		URLFrontend: urlFrontend,
+	}
 
-    return cfg, err
+	return cfg, err
 }
 
-func loadURL(envURL string, envPort string) (*url.URL, error){
+func loadURL(envURL string, envPort string) (*url.URL, error) {
 	rawURL := os.Getenv(envURL)
 	if rawURL == "" {
-        return nil, fmt.Errorf("environment variable %s is required but not set", envURL)
-    }
+		return nil, fmt.Errorf("environment variable %s is required but not set", envURL)
+	}
 	port := os.Getenv(envPort)
 
 	parsedURL, err := url.Parse(rawURL)

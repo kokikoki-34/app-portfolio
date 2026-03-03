@@ -1,11 +1,11 @@
 version: 3
 
 includes:
-  local:backend:
-    taskfile: ./tasks/backend/local.yaml
+  # local:backend:
+  #   taskfile: ./tasks/backend/local.yaml
 
-  local:frontend:
-    taskfile: ./tasks/frontend/local.yaml
+  # local:frontend:
+  #   taskfile: ./tasks/frontend/local.yaml
 
   container:backend:
     taskfile: ./tasks/backend/container.yaml
