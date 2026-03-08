@@ -1,5 +1,5 @@
 [tools]
 envsubst = "1.4.3"
-go = "1.26"
+go = "1.26.0"
 node = "24.13.1"
 overmind = "2.5.1"
