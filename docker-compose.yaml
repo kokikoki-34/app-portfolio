@@ -1,7 +1,103 @@
-# docker-compose.yml
 name: app-portfolio
 
 services:
+  # ---------------------------------------------------------
+  # Main Application Database
+  # ---------------------------------------------------------
+  db:
+    image: postgres:18-alpine
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.local
+        required: false
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Tokyo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ---------------------------------------------------------
+  # Atlas Apply: Execute migrations (Profile: tools)
+  # ---------------------------------------------------------
+  atlas-apply:
+    build:
+      context: src/backend/db
+      dockerfile: Dockerfile
+    container_name: atlas-apply
+    volumes:
+      - ./src/backend/db/migration:/migration:ro
+    environment:
+      - CONNECTION_STRING=${CONNECTION_STRING:-""}
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: [ "sh", "-c" ]
+    command:
+     - |
+      atlas migrate apply \
+      --dir "file:///migration" \
+      --url "${CONNECTION_STRING}"
+
+  # ---------------------------------------------------------
+  # Go Backend API
+  # ---------------------------------------------------------
+  backend:
+    build:
+      context: src/backend
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.local
+        required: false
+    environment:
+      CONNECTION_STRING: ${CONNECTION_STRING}
+    ports:
+      - ${PORT_BACKEND}:8080
+    depends_on:
+      db:
+        condition: service_healthy
+      atlas-apply:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ---------------------------------------------------------
+  # React/Vite Frontend
+  # ---------------------------------------------------------
+  frontend:
+    build:
+      context: src/frontend
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: true
+      - path: .env.local
+        required: false
+    ports:
+      - ${PORT_FRONTEND}:8080
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
   # ---------------------------------------------------------
   # IAM Authorization Proxy
   # ---------------------------------------------------------
@@ -28,77 +124,51 @@ services:
         condition: service_healthy
 
   # ---------------------------------------------------------
-  # Go Backend API
+  # Shadow Database for Atlas Diff (Profile: tools)
   # ---------------------------------------------------------
-  backend:
-    build:
-      context: src/backend
-      dockerfile: Dockerfile
-    env_file:
-    - path: .env
-      required: true
-    - path: .env.local
-      required: false
+  shadow-db:
+    profiles: ["migration"]
+    image: postgres:18-alpine
+    container_name: shadow-db
     environment:
-      CONNECTION_STRING: ${CONNECTION_STRING}
-    ports:
-      - ${PORT_BACKEND}:8080
-    depends_on:
-      db:
-        condition: service_healthy
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     healthcheck:
-      test: ["CMD", "/healthcheck"]
-      interval: 30s
-      timeout: 5s
-      retries: 10
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "postgres", "-p", "5432"]
+      interval: 3s
+      timeout: 1s
+      retries: 3
       start_period: 10s
 
   # ---------------------------------------------------------
-  # React/Vite Frontend
+  # Atlas Migrate: Generate diff (Profile: tools)
   # ---------------------------------------------------------
-  frontend:
+  atlas-migrate:
+    profiles: ["migration"]
     build:
-      context: src/frontend
+      context: src/backend/db
       dockerfile: Dockerfile
-    env_file:
-    - path: .env
-      required: true
-    - path: .env.local
-      required: false
-    ports:
-      - ${PORT_FRONTEND}:8080
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080"]
-      interval: 30s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-
-  db:
-    build:
-      context: .
-      dockerfile: infra/db/Dockerfile
-    env_file:
-      - path: .env
-        required: true
-      - path: .env.local
-        required: false
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      TZ: Asia/Tokyo
-    ports:
-      - "5432:5432"
+    container_name: atlas-migrate
     volumes:
-      - ./src/backend/db/schema:/docker-entrypoint-initdb.d:ro
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+      - ./src/backend/db/migration:/migration:rw
+      - ./src/backend/db/schema:/schema:ro
+    environment:
+      - MIGRATION_NAME=${MIGRATION_NAME:-""}
+    depends_on:
+      shadow-db:
+        condition: service_healthy
+    entrypoint: [ "sh", "-c" ]
+    command:
+      - |
+        # concatenate all sql files in the schema directories into a single file
+        find /schema -name "*.sql" | sort | xargs cat > /tmp/all_schema.sql && \
+
+        # run atlas migrate
+        atlas migrate diff "${MIGRATION_NAME}" \
+          --dir "file:///migration" \
+          --to "file:///tmp/all_schema.sql" \
+          --dev-url "postgres://postgres:postgres@shadow-db:5432/postgres?sslmode=disable"
 
 volumes:
   postgres_data:

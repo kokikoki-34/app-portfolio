@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 	"log/slog"
+	"portfolio/internal/func/health/app"
 
 	gen "portfolio/db/gen/sys"
-	"portfolio/internal/func/health/app"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

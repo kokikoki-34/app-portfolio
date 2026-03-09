@@ -11,11 +11,13 @@ import (
 )
 
 const updateHeartbeat = `-- name: UpdateHeartbeat :one
-UPDATE sys.heartbeats
+INSERT INTO
+    sys.heartbeats (id, at)
+VALUES
+    (1, NOW ()) ON CONFLICT (id) DO
+UPDATE
 SET
-    at = NOW ()
-WHERE
-    id = 1 RETURNING at
+    at = EXCLUDED.at RETURNING at
 `
 
 // query.sql

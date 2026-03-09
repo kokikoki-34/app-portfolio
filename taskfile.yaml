@@ -1,17 +1,21 @@
 version: 3
 
 includes:
-  # local:backend:
-  #   taskfile: ./tasks/backend/local.yaml
+  local:backend:
+    taskfile: ./tasks/backend/local.yaml
+    internal: true
 
-  # local:frontend:
-  #   taskfile: ./tasks/frontend/local.yaml
+  local:frontend:
+    taskfile: ./tasks/frontend/local.yaml
+    internal: true
 
   container:backend:
     taskfile: ./tasks/backend/container.yaml
+    internal: true
 
   container:frontend:
     taskfile: ./tasks/frontend/container.yaml
+    internal: true
 
 tasks:
   default:
@@ -33,21 +37,37 @@ tasks:
     vars:
       MODE: '{{default "container" .MODE}}'
     cmds:
-      - task: '{{.MODE}}:build'
+      - task: "{{.MODE}}:build"
 
   run:
     desc: "Run apps. Usage: task run [MODE=local|container] (default: container)"
     vars:
       MODE: '{{default "container" .MODE}}'
     cmds:
-      - task: '{{.MODE}}:run'
+      - task: "{{.MODE}}:run"
 
   clean:
     desc: "Clean up residual processes. Usage: task clean [MODE=local|container]"
     vars:
       MODE: '{{default "container" .MODE}}'
     cmds:
-      - task: '{{.MODE}}:clean'
+      - task: "{{.MODE}}:clean"
+
+  migration:create:
+    desc: Create migration.
+    dir: "{{.ROOT_DIR}}/scripts"
+    vars:
+      NAME: '{{default "" .NAME }}'
+    cmds:
+      - cmd: ./create_migration.sh {{.NAME}}
+
+  migration:status:
+    desc: Check the migration status.
+    cmds:
+      - |
+        CONNECTION_STRING="${CONNECTION_STRING}" \
+        docker compose --profile migration run --rm atlas-apply \
+        "atlas migrate status --dir file:///migration --url \$CONNECTION_STRING"
 
   # ---------------------------------------------------------
   # Internal Implementation
