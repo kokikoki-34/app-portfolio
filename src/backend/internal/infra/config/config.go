@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log/slog"
+	"fmt"
 	"os"
 )
 
@@ -10,17 +10,16 @@ type Config struct {
 	ConnectionString string
 }
 
-func LoadConfig(logger *slog.Logger) *Config {
+func LoadConfig() (*Config, error) {
 	port := os.Getenv("PORT")
 	if port == "" {
-		logger.Warn("PORT is not set. Defaulting to 8080")
 		port = "8080"
 	}
 
 	cs := os.Getenv("CONNECTION_STRING")
 	if cs == "" {
-		logger.Warn("CONNECTION_STRING is not set. Could not connect Database")
+		return nil, fmt.Errorf("CONNECTION_STRING is not set: application cannot start without a data source")
 	}
 
-	return &Config{Port: port, ConnectionString: cs}
+	return &Config{Port: port, ConnectionString: cs}, nil
 }

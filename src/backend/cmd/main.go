@@ -25,7 +25,11 @@ func main() {
 	slog.SetDefault(logger)
 
 	mux := http.NewServeMux()
-	config := config.LoadConfig(logger)
+	config, err := config.LoadConfig()
+	if err != nil {
+		logger.Error("failed to load config", "error", err)
+		os.Exit(1)
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -33,6 +37,7 @@ func main() {
 	pool, err := db.NewPool(ctx, config.ConnectionString)
 	if err != nil {
 		logger.Error("failed to connect to database", "error", err)
+		os.Exit(1)
 	}
 
 	// -------------------------------------------------------------------------
@@ -47,7 +52,7 @@ func main() {
 
 	// HTTP server
 	server := &http.Server{
-		Addr:    ":" + config.Port,
+		Addr:    ":" + "8080",
 		Handler: mux,
 	}
 
