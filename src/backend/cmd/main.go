@@ -25,11 +25,13 @@ func main() {
 	slog.SetDefault(logger)
 
 	mux := http.NewServeMux()
-	config, err := config.LoadConfig()
+	config, err := config.LoadConfig(logger)
 	if err != nil {
 		logger.Error("failed to load config", "error", err)
 		os.Exit(1)
 	}
+
+	logger.Info("config is successfully loaded")
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -39,6 +41,8 @@ func main() {
 		logger.Error("failed to connect to database", "error", err)
 		os.Exit(1)
 	}
+
+	logger.Info("database connection pool is successfully created")
 
 	// -------------------------------------------------------------------------
 	// DI
@@ -60,6 +64,8 @@ func main() {
 		logger.Error("server failed", "error", err)
 		os.Exit(1)
 	}
+
+	logger.Info("server started")
 }
 
 func run(logger *slog.Logger, ctx context.Context, stop context.CancelFunc, server *http.Server) error {

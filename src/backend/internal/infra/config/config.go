@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 )
 
@@ -10,10 +11,11 @@ type Config struct {
 	ConnectionString string
 }
 
-func LoadConfig() (*Config, error) {
+func LoadConfig(logger *slog.Logger) (*Config, error) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
+		logger.Info("PORT is not set. Set Default.", "port", port)
 	}
 
 	cs := os.Getenv("CONNECTION_STRING")
