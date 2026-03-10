@@ -22,14 +22,11 @@ func main() {
 	slog.SetDefault(logger)
 
 	mux := http.NewServeMux()
-	config, err := infra.LoadConfig(logger)
-	if err != nil {
-		logger.Error("failed to load config", "error", err)
-		os.Exit(1)
-	}
+	config := infra.LoadConfig(logger)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
 	gcpTokenProvider := infra.NewGCPTokenProvider(logger, ctx)
 
 	// -------------------------------------------------------------------------
