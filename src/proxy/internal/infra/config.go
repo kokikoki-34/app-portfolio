@@ -15,7 +15,7 @@ type Config struct {
 	URLFrontend *url.URL
 }
 
-func LoadConfig(logger *slog.Logger) *Config {
+func LoadConfig(logger *slog.Logger) (*Config, error) {
 	hostAllowed := os.Getenv("HOST_ALLOWED")
 	if hostAllowed == "" {
 		hostAllowed = "localhost"
@@ -28,14 +28,12 @@ func LoadConfig(logger *slog.Logger) *Config {
 
 	urlBackend, err := loadURL("URL_BACKEND", "PORT_BACKEND")
 	if err != nil {
-		urlBackend = &url.URL{}
-		logger.Warn("failed to load backend URL", "error", err)
+		return nil, fmt.Errorf("failed to load backend URL: %w", err)
 	}
 
 	urlFrontend, err := loadURL("URL_FRONTEND", "PORT_FRONTEND")
 	if err != nil {
-		urlFrontend = &url.URL{}
-		logger.Warn("failed to load frontend URL", "error", err)
+		return nil, fmt.Errorf("failed to load frontend URL: %w", err)
 	}
 
 	cfg := &Config{
@@ -45,7 +43,7 @@ func LoadConfig(logger *slog.Logger) *Config {
 		URLFrontend: urlFrontend,
 	}
 
-	return cfg
+	return cfg, err
 }
 
 func loadURL(envURL string, envPort string) (*url.URL, error) {
@@ -57,7 +55,7 @@ func loadURL(envURL string, envPort string) (*url.URL, error) {
 
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
-		return nil, fmt.Errorf("cannot parse URL %s: %w", rawURL, err)
+		return nil, err
 	}
 
 	if port != "" {
