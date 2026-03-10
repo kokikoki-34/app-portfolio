@@ -1,5 +1,8 @@
 version: 3
 
+vars:
+  PORT_PROXY: '{{.PORT_PROXY | default "8081"}}'
+
 tasks:
   default:
     deps:
@@ -8,11 +11,13 @@ tasks:
   ci-test:
     desc: "Run containers in the background for CI environment and check status"
     cmds:
-      - docker compose up -d
-      - sleep 10
+      - docker compose up -d --wait || (docker compose logs atlas-apply && exit 1)
       - |
-        if ! docker compose ps | grep "Up"; then
-          echo "Containers failed to start!"
-          docker compose logs
-          exit 1
-        fi
+        echo "Checking application health via Proxy..."
+        curl --fail --silent --show-error \
+          --retry 10 \
+          --retry-delay 3 \
+          --retry-connrefused \
+          http://localhost:{{.PORT_PROXY}}/api/health
+
+      - echo "Integration check passed! The entire stack is functional."

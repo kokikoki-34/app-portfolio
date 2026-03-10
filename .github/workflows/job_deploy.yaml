@@ -11,6 +11,7 @@ env:
   GAR_LOCATION: asia-northeast1
   ENV_SUFFIX: ${{ github.ref_name != 'main' && '-dev' || '' }}
   REPOSITORY: app-portfolio-repo${{ github.ref_name != 'main' && '-dev' || '' }}
+  CONNECTION_STRINGS: ${{ secrets.CONNECTION_STRING }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
