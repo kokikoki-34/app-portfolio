@@ -1,4 +1,3 @@
-
 # ---------------------------------------------------------
 # IAM & Service Account
 # ---------------------------------------------------------
@@ -8,16 +7,15 @@ resource "google_service_account" "cloudrun_sa" {
   display_name = "Service Account for Portfolio App Cloud Run (${var.env})"
 }
 
-resource "google_artifact_registry_repository" "portfolio_repo" {
-  location      = var.region
-  repository_id = "app-portfolio-repo${var.env}"
-  format        = "DOCKER"
+# Create a separate Service Account for GitHub Actions
+resource "google_service_account" "github_actions_sa" {
+  account_id   = "sa-github-actions${var.env}"
+  display_name = "GitHub Actions Deployment Account (${var.env})"
 }
 
 # ---------------------------------------------------------
 # IAM Policies (Resource-level)
 # ---------------------------------------------------------
-
 resource "google_cloud_run_v2_service_iam_member" "proxy_public_access" {
   name     = google_cloud_run_v2_service.proxy.name
   location = google_cloud_run_v2_service.proxy.location
@@ -37,6 +35,68 @@ resource "google_cloud_run_v2_service_iam_member" "frontend_invoker" {
   location = google_cloud_run_v2_service.frontend.location
   role     = "roles/run.invoker"
   member   = "serviceAccount:${google_service_account.cloudrun_sa.email}"
+}
+
+resource "google_project_iam_member" "github_actions_roles" {
+  for_each = toset([
+    "roles/artifactregistry.writer",
+    "roles/run.developer",
+    "roles/iam.serviceAccountUser",
+    "roles/run.viewer"
+  ])
+  project = var.project_id
+  role    = each.key
+  member  = "serviceAccount:${google_service_account.github_actions_sa.email}"
+}
+
+# ---------------------------------------------------------
+# Workload Identity Federation
+# ---------------------------------------------------------
+resource "google_iam_workload_identity_pool" "github_pool" {
+  workload_identity_pool_id = "github-pool${var.env}"
+  display_name              = "GitHub Pool (${var.env})"
+}
+resource "google_iam_workload_identity_pool_provider" "github_provider" {
+  workload_identity_pool_id          = google_iam_workload_identity_pool.github_pool.workload_identity_pool_id
+  workload_identity_pool_provider_id = "github-provider${var.env}"
+
+  attribute_mapping = {
+    "google.subject"       = "assertion.sub"
+    "attribute.repository" = "assertion.repository"
+    "attribute.owner"      = "assertion.repository_owner"
+  }
+
+  attribute_condition = "attribute.repository == 'kokikoki-34/app-portfolio'"
+
+  oidc {
+    issuer_uri = "https://token.actions.githubusercontent.com"
+  }
+}
+
+resource "google_service_account_iam_member" "wif_sa_user" {
+  service_account_id = google_service_account.github_actions_sa.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool.name}/attribute.repository/kokikoki-34/app-portfolio"
+}
+
+# ---------------------------------------------------------
+# Outputs (GitHub Actions)
+# ---------------------------------------------------------
+output "wif_provider_name" {
+  value = google_iam_workload_identity_pool_provider.github_provider.name
+}
+
+output "github_actions_sa_email" {
+  value = google_service_account.github_actions_sa.email
+}
+
+# ---------------------------------------------------------
+# Artifact Registry
+# ---------------------------------------------------------
+resource "google_artifact_registry_repository" "portfolio_repo" {
+  location      = var.region
+  repository_id = "app-portfolio-repo${var.env}"
+  format        = "DOCKER"
 }
 
 # ---------------------------------------------------------
@@ -77,7 +137,7 @@ resource "google_cloud_run_v2_service" "backend" {
         network    = google_compute_network.vpc_network.id
         subnetwork = google_compute_subnetwork.vpc_subnet.id
       }
-      egress = "ALL_TRAFFIC"
+      egress = "PRIVATE_RANGES_ONLY"
     }
   }
 }

@@ -38,6 +38,9 @@ jobs:
   # ---------------------------------------------------------
   # Build and Deploy (Cloud Run)
   # ---------------------------------------------------------
+  # ---------------------------------------------------------
+  # Build and Deploy (Cloud Run)
+  # ---------------------------------------------------------
   deploy:
     needs: migrate
     runs-on: ubuntu-latest
@@ -52,21 +55,33 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Google Auth
+        id: auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
-          service_account: ${{ secrets.GCP_SA_EMAIL }}
+          token_format: 'access_token'
+          access_token_scopes: 'https://www.googleapis.com/auth/cloud-platform'
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Docker Auth
-        run: |-
-          gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
+        uses: 'docker/login-action@v3' # v3を推奨
+        with:
+          username: 'oauth2accesstoken'
+          password: '${{ steps.auth.outputs.access_token }}'
+          registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
+
+      - name: Set Image Name
+        id: set_image_name
+        run: |
+          IMAGE_PATH="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ matrix.service }}${{ env.ENV_SUFFIX }}:${{ github.sha }}"
+          echo "image_path=$IMAGE_PATH" >> $GITHUB_OUTPUT
 
       - name: Build and Push Container
-        run: |-
-          IMAGE_NAME="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ matrix.service }}${{ env.ENV_SUFFIX }}:${{ github.sha }}"
-          docker build -t "$IMAGE_NAME" ./src/${{ matrix.service }}
-          docker push "$IMAGE_NAME"
-          echo "IMAGE_URL=$IMAGE_NAME" >> $GITHUB_ENV
+        uses: docker/build-push-action@v4
+        with:
+          context: ./src/${{ matrix.service }}
+          push: true
+          tags: ${{ steps.set_image_name.outputs.image_path }}
 
       - name: Fetch Service URLs for Proxy
         if: matrix.service == 'proxy'
@@ -85,7 +100,7 @@ jobs:
         with:
           service: app-portfolio-${{ matrix.service }}${{ env.ENV_SUFFIX }}
           region: ${{ env.REGION }}
-          image: ${{ env.IMAGE_URL }}
+          image: ${{ steps.set_image_name.outputs.image_path }} # ここを修正
           env_vars: |-
             ${{ matrix.service == 'backend' && format('CONNECTION_STRING={0}', secrets.CONNECTION_STRING) || '' }}
             ${{ matrix.service == 'proxy' && format('HOST_ALLOWED={0}', steps.fetch-urls.outputs.host_allowed) || '' }}
