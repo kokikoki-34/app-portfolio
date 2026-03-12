@@ -2,7 +2,7 @@ version: 3
 
 includes:
   _migration:
-    taskfile: ./src/backend/taskfile.yaml
+    taskfile: ./db/taskfile.yaml
     internal: true
 
   _docs:
@@ -25,18 +25,18 @@ tasks:
     cmds:
       - docker compose build
 
-  app:run:
-    desc: Run application
+  app:start:
+    desc: Start application
     cmds:
       - docker compose up
 
   app:stop:
-    desc: Clean up residual container
+    desc: Stop and remove application
     cmds:
       - docker compose down
 
   database:delete:
-    desc: Remove database
+    desc: Delete database
     cmds:
       - docker compose down -v
 
@@ -49,3 +49,8 @@ tasks:
     desc: Generate documents
     cmds:
       - task: _docs:generate
+
+  sqlc:generate:
+    desc: Generate code with sqlc
+    cmds:
+      - sqlc generate

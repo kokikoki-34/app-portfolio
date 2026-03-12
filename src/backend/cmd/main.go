@@ -12,7 +12,7 @@ import (
 
 	"portfolio/internal/func/health/api"
 	"portfolio/internal/func/health/app"
-	"portfolio/internal/func/health/repo"
+	"portfolio/internal/func/health/infra"
 	"portfolio/internal/infra/config"
 	"portfolio/internal/infra/db"
 )
@@ -47,7 +47,7 @@ func main() {
 	// -------------------------------------------------------------------------
 	// DI
 	// -------------------------------------------------------------------------
-	heartbeatRepo := repo.NewRepository(logger, pool)
+	heartbeatRepo := infra.NewRepository(logger, pool)
 	heartbeatService := app.NewService(logger, heartbeatRepo)
 	handler := api.NewHeartbeatHandler(logger, heartbeatService)
 

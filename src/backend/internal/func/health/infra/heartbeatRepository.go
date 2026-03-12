@@ -1,11 +1,11 @@
-package repo
+package infra
 
 import (
 	"context"
 	"log/slog"
-	"portfolio/internal/func/health/app"
 
-	gen "portfolio/db/gen/sys"
+	"portfolio/internal/func/health/app"
+	"portfolio/internal/func/health/infra/db/gen"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
