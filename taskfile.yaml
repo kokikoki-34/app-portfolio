@@ -1,8 +1,13 @@
 version: 3
 
 includes:
-  migration:
+  _migration:
     taskfile: ./src/backend/taskfile.yaml
+    internal: true
+
+  _docs:
+    taskfile: ./tools/db/taskfile.yaml
+    internal: true
 
 tasks:
   default:
@@ -15,20 +20,32 @@ tasks:
     cmds:
       - mise install
 
-  build:
+  app:build:
+    desc: Build application
     cmds:
       - docker compose build
 
-  run:
+  app:run:
+    desc: Run application
     cmds:
       - docker compose up
 
-  stop:
-    desc: "Clean up residual container"
+  app:stop:
+    desc: Clean up residual container
     cmds:
       - docker compose down
 
-  remove_database:
+  database:delete:
     desc: Remove database
     cmds:
       - docker compose down -v
+
+  migration:create:
+    desc: Create migration
+    cmds:
+      - task: _migration:create
+
+  docs:generate:
+    desc: Generate documents
+    cmds:
+      - task: _docs:generate
