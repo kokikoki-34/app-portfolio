@@ -14,55 +14,21 @@ tasks:
     desc: Set up develop environment
     cmds:
       - mise install
-      - direnv allow
 
-  # ---------------------------------------------------------
-  # Public API (You only need to run these)
-  # ---------------------------------------------------------
   build:
-    desc: "Build apps. Usage: task build [MODE=local|container] (default: container)"
-    vars:
-      MODE: '{{default "container" .MODE}}'
-    cmds:
-      - task: "{{.MODE}}:build"
-
-  run:
-    desc: "Run apps. Usage: task run [MODE=local|container] (default: container)"
-    vars:
-      MODE: '{{default "container" .MODE}}'
-    cmds:
-      - task: "{{.MODE}}:run"
-
-  clean:
-    desc: "Clean up residual processes. Usage: task clean [MODE=local|container]"
-    vars:
-      MODE: '{{default "container" .MODE}}'
-    cmds:
-      - task: "{{.MODE}}:clean"
-
-  # migration:status:
-  #   desc: Check the migration status.
-  #   cmds:
-  #     - |
-  #       CONNECTION_STRING="${CONNECTION_STRING}" \
-  #       docker compose --profile migration run --rm atlas-apply \
-  #       "atlas migrate status --dir file:///migration --url \$CONNECTION_STRING"
-
-  # ---------------------------------------------------------
-  # Internal Implementations
-  # ---------------------------------------------------------
-  container:build:
-    internal: true
     cmds:
       - docker compose build
 
-  container:run:
-    internal: true
+  run:
     cmds:
       - docker compose up
 
-  container:clean:
-    internal: true
+  stop:
     desc: "Clean up residual container"
     cmds:
       - docker compose down
+
+  remove_database:
+    desc: Remove database
+    cmds:
+      - docker compose down -v
