@@ -13,7 +13,7 @@ jobs:
     uses: ./.github/workflows/job_ci.yaml
     secrets: inherit
 
-  push:
+  cd:
     needs: [ ci ]
-    uses: ./.github/workflows/job_deploy.yaml
+    uses: ./.github/workflows/job_cd.yaml
     secrets: inherit

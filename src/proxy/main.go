@@ -18,11 +18,9 @@ func main() {
 	// -------------------------------------------------------------------------
 	// Dependency
 	// -------------------------------------------------------------------------
-	// Logger
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
-	ctx := context.Background()
 	mux := http.NewServeMux()
 	config, err := infra.LoadConfig(logger)
 	if err != nil {
@@ -31,7 +29,7 @@ func main() {
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-    defer stop()
+	defer stop()
 	gcpTokenProvider := infra.NewGCPTokenProvider(logger, ctx)
 
 	// -------------------------------------------------------------------------
@@ -66,7 +64,7 @@ func main() {
 	}
 }
 
-func run(logger *slog.Logger, ctx context.Context, stop context.CancelFunc, server*http.Server) error {
+func run(logger *slog.Logger, ctx context.Context, stop context.CancelFunc, server *http.Server) error {
 	go func() {
 		logger.Info("server starting", "port", server.Addr)
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {

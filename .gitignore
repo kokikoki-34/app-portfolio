@@ -13,10 +13,10 @@ Thumbs.db
 
 # editor setting files
 .vscode/*
-!.vscode/settings.json.example
-!.vscode/extensions.json.example
-!.vscode/tasks.json.example
-!.vscode/launch.json.example
+!.vscode/settings.json.template
+!.vscode/extensions.json.template
+!.vscode/tasks.json.template
+!.vscode/launch.json.template
 .idea/
 *.swp
 *.swo

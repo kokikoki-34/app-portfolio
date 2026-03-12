@@ -1,0 +1,108 @@
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: asia-northeast1
+  GAR_LOCATION: asia-northeast1
+  ENV_NAME: ${{ github.ref_name }}
+  ENV_SUFFIX: ${{ github.ref_name != 'main' && '-dev' || '' }}
+  REPOSITORY: app-portfolio-repo${{ github.ref_name != 'main' && '-dev' || '' }}
+
+jobs:
+  # ---------------------------------------------------------
+  # DB Migration (Atlas)
+  # ---------------------------------------------------------
+  migrate:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Atlas
+        uses: ariga/setup-atlas@v0
+
+      - name: Apply Migrations to Neon
+        run: |
+          atlas migrate apply \
+            --dir "file://src/backend/db/migration" \
+            --url "${{ secrets.CONNECTION_STRING }}" \
+            --revisions-schema public \
+            --allow-dirty
+
+  # ---------------------------------------------------------
+  # Build and Deploy (Cloud Run)
+  # ---------------------------------------------------------
+  # ---------------------------------------------------------
+  # Build and Deploy (Cloud Run)
+  # ---------------------------------------------------------
+  deploy:
+    needs: migrate
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+
+    strategy:
+      matrix:
+        service: [proxy, backend, frontend]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: 'access_token'
+          access_token_scopes: 'https://www.googleapis.com/auth/cloud-platform'
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Docker Auth
+        uses: 'docker/login-action@v3' # v3を推奨
+        with:
+          username: 'oauth2accesstoken'
+          password: '${{ steps.auth.outputs.access_token }}'
+          registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
+
+      - name: Set Image Name
+        id: set_image_name
+        run: |
+          IMAGE_PATH="${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ matrix.service }}${{ env.ENV_SUFFIX }}:${{ github.sha }}"
+          echo "image_path=$IMAGE_PATH" >> $GITHUB_OUTPUT
+
+      - name: Build and Push Container
+        uses: docker/build-push-action@v4
+        with:
+          context: ./src/${{ matrix.service }}
+          push: true
+          tags: ${{ steps.set_image_name.outputs.image_path }}
+
+      - name: Fetch Service URLs for Proxy
+        if: matrix.service == 'proxy'
+        id: fetch-urls
+        run: |
+          B_URL=$(gcloud run services describe app-portfolio-backend${{ env.ENV_SUFFIX }} --region ${{ env.REGION }} --format 'value(status.url)')
+          F_URL=$(gcloud run services describe app-portfolio-frontend${{ env.ENV_SUFFIX }} --region ${{ env.REGION }} --format 'value(status.url)')
+          H_ALLOWED=$(gcloud beta run domain-mappings list --filter="spec.routeName=app-portfolio-proxy${{ env.ENV_SUFFIX }}" --region ${{ env.REGION }} --format="value(metadata.name)")
+
+          echo "backend_url=$B_URL" >> $GITHUB_OUTPUT
+          echo "frontend_url=$F_URL" >> $GITHUB_OUTPUT
+          echo "host_allowed=$H_ALLOWED" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: app-portfolio-${{ matrix.service }}${{ env.ENV_SUFFIX }}
+          region: ${{ env.REGION }}
+          image: ${{ steps.set_image_name.outputs.image_path }} # ここを修正
+          env_vars: |-
+            ${{ matrix.service == 'backend' && format('CONNECTION_STRING={0}', secrets.CONNECTION_STRING) || '' }}
+            ${{ matrix.service == 'proxy' && format('HOST_ALLOWED={0}', steps.fetch-urls.outputs.host_allowed) || '' }}
+            ${{ matrix.service == 'proxy' && format('URL_BACKEND={0}', steps.fetch-urls.outputs.backend_url) || '' }}
+            ${{ matrix.service == 'proxy' && format('URL_FRONTEND={0}', steps.fetch-urls.outputs.frontend_url) || '' }}

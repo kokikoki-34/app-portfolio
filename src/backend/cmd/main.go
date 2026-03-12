@@ -10,40 +10,70 @@ import (
 	"syscall"
 	"time"
 
-	"portfolio/internal/api/handler"
-	"portfolio/internal/infra"
+	"portfolio/internal/func/health/api"
+	"portfolio/internal/func/health/app"
+	"portfolio/internal/func/health/repo"
+	"portfolio/internal/infra/config"
+	"portfolio/internal/infra/db"
 )
 
 func main() {
-	// Contexts
+	// -------------------------------------------------------------------------
+	// Dependency
+	// -------------------------------------------------------------------------
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	config := infra.LoadConfig()
-	mux := http.NewServeMux()
-
-	// Default Settings
 	slog.SetDefault(logger)
 
-	// DI
-	healthHandler := handler.NewHealthHandler(logger)
-
-	// Routing
-	mux.HandleFunc("GET /api/health", healthHandler.Check)
-
-	// HTTP server
-	server := &http.Server{
-		Addr:    ":" + "8080",
-		Handler: mux,
+	mux := http.NewServeMux()
+	config, err := config.LoadConfig(logger)
+	if err != nil {
+		logger.Error("failed to load config", "error", err)
+		os.Exit(1)
 	}
 
-	// Graceful shutdown
+	logger.Info("config is successfully loaded")
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	pool, err := db.NewPool(ctx, config.ConnectionString)
+	if err != nil {
+		logger.Error("failed to connect to database", "error", err)
+		os.Exit(1)
+	}
+
+	logger.Info("database connection pool is successfully created")
+
+	// -------------------------------------------------------------------------
+	// DI
+	// -------------------------------------------------------------------------
+	heartbeatRepo := repo.NewRepository(logger, pool)
+	heartbeatService := app.NewService(logger, heartbeatRepo)
+	handler := api.NewHeartbeatHandler(logger, heartbeatService)
+
+	// Routing
+	mux.HandleFunc("GET /api/health", handler.Check)
+
+	// HTTP server
+	server := &http.Server{
+		Addr:    ":" + config.Port,
+		Handler: mux,
+	}
+
+	if err := run(logger, ctx, stop, server); err != nil {
+		logger.Error("server failed", "error", err)
+		os.Exit(1)
+	}
+
+	logger.Info("server started")
+}
+
+func run(logger *slog.Logger, ctx context.Context, stop context.CancelFunc, server *http.Server) error {
 	go func() {
-		logger.Info("server starting", "port", config.Port)
+		logger.Info("server starting", "port", server.Addr)
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("server failed to start", "error", err)
-			os.Exit(1)
+			stop()
 		}
 	}()
 
@@ -54,9 +84,9 @@ func main() {
 	defer cancel()
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		logger.Error("server forced to shutdown", "error", err)
-		os.Exit(1)
+		return err
 	}
 
 	logger.Info("server stopped completely")
+	return nil
 }
