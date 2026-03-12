@@ -9,11 +9,15 @@ permissions:
   id-token: write
 
 jobs:
-  ci:
-    uses: ./.github/workflows/job_ci.yaml
+  ci-build-test:
+    uses: ./.github/workflows/job_ci_build_test.yaml
+    secrets: inherit
+
+  ci_verify_docs:
+    uses: ./.github/workflows/job_ci_verify_docs.yaml
     secrets: inherit
 
   cd:
-    needs: [ ci ]
+    needs: [ ci-build-test, ci_verify_docs]
     uses: ./.github/workflows/job_cd.yaml
     secrets: inherit

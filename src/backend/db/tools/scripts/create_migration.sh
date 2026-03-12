@@ -30,8 +30,6 @@ cleanup() {
 main(){
   trap cleanup EXIT SIGINT SIGTERM
 
-  echo $COMPOSE_FILE
-
   local migration_name="${1:-""}"
   if [[ -z "$migration_name" ]]; then
     log "ERROR" "No migration description provided"
