@@ -43,13 +43,11 @@ main(){
 
   log "INFO" "Migration creating: $migration_name"
 
-  if ! MIGRATION_NAME="$migration_name" \
-    docker compose -f "$COMPOSE_FILE" up \
-    --abort-on-container-exit \
-    --quiet-pull \
-    --quiet-build; then
-    log "ERROR" "Atlas migration failed. Check the logs above."
-    exit 1
+  export MIGRATION_NAME="$migration_name"
+
+  if ! docker compose -f "$COMPOSE_FILE" run --rm --quiet-pull --quiet-build atlas-migrate; then
+      log "ERROR" "Atlas migration failed."
+      exit 1
   fi
 
   log "INFO" "Migration diff generated successfully"
