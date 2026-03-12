@@ -1,0 +1,259 @@
+{
+  "name": "docs_db",
+  "tables": [
+    {
+      "name": "atlas_schema_revisions.atlas_schema_revisions",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "version",
+          "type": "varchar",
+          "nullable": false
+        },
+        {
+          "name": "description",
+          "type": "varchar",
+          "nullable": false
+        },
+        {
+          "name": "type",
+          "type": "bigint",
+          "nullable": false,
+          "default": "2"
+        },
+        {
+          "name": "applied",
+          "type": "bigint",
+          "nullable": false,
+          "default": "0"
+        },
+        {
+          "name": "total",
+          "type": "bigint",
+          "nullable": false,
+          "default": "0"
+        },
+        {
+          "name": "executed_at",
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        {
+          "name": "execution_time",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "error",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "error_stmt",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "hash",
+          "type": "varchar",
+          "nullable": false
+        },
+        {
+          "name": "partial_hashes",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "operator_version",
+          "type": "varchar",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "atlas_schema_revisions_pkey",
+          "def": "CREATE UNIQUE INDEX atlas_schema_revisions_pkey ON atlas_schema_revisions.atlas_schema_revisions USING btree (version)",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "columns": [
+            "version"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "atlas_schema_revisions_applied_not_null",
+          "type": "n",
+          "def": "NOT NULL applied",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "applied"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_description_not_null",
+          "type": "n",
+          "def": "NOT NULL description",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "description"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_executed_at_not_null",
+          "type": "n",
+          "def": "NOT NULL executed_at",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "executed_at"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_execution_time_not_null",
+          "type": "n",
+          "def": "NOT NULL execution_time",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "execution_time"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_hash_not_null",
+          "type": "n",
+          "def": "NOT NULL hash",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "hash"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_operator_version_not_null",
+          "type": "n",
+          "def": "NOT NULL operator_version",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "operator_version"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_total_not_null",
+          "type": "n",
+          "def": "NOT NULL total",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "total"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_type_not_null",
+          "type": "n",
+          "def": "NOT NULL type",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "type"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_version_not_null",
+          "type": "n",
+          "def": "NOT NULL version",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "version"
+          ]
+        },
+        {
+          "name": "atlas_schema_revisions_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (version)",
+          "table": "atlas_schema_revisions.atlas_schema_revisions",
+          "referenced_table": "",
+          "columns": [
+            "version"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sys.heartbeats",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "heartbeats_pkey",
+          "def": "CREATE UNIQUE INDEX heartbeats_pkey ON sys.heartbeats USING btree (id)",
+          "table": "sys.heartbeats",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "heartbeats_at_not_null",
+          "type": "n",
+          "def": "NOT NULL at",
+          "table": "sys.heartbeats",
+          "referenced_table": "",
+          "columns": [
+            "at"
+          ]
+        },
+        {
+          "name": "heartbeats_id_not_null",
+          "type": "n",
+          "def": "NOT NULL id",
+          "table": "sys.heartbeats",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "heartbeats_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "sys.heartbeats",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    }
+  ],
+  "driver": {
+    "name": "postgres",
+    "database_version": "PostgreSQL 18.3 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+    "meta": {
+      "current_schema": "public",
+      "search_paths": [
+        "postgres",
+        "public"
+      ],
+      "dict": {
+        "Functions": "Stored procedures and functions"
+      }
+    }
+  }
+}
