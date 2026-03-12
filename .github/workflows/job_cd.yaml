@@ -30,7 +30,7 @@ jobs:
       - name: Apply Migrations to Neon
         run: |
           atlas migrate apply \
-            --dir "file://src/backend/db/migration" \
+            --dir "file://db/migration" \
             --url "${{ secrets.CONNECTION_STRING }}" \
             --revisions-schema public \
             --allow-dirty
