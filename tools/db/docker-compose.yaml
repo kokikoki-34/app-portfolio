@@ -13,11 +13,11 @@ services:
 
   atlas-apply:
     build:
-      context: ../../src/backend/db/tools
+      context: ../../db/tools
       dockerfile: Dockerfile
     container_name: atlas-apply
     volumes:
-      - ../../src/backend/db/migration:/migration:ro
+      - ../../db/migration:/migration:ro
     environment:
       CONNECTION_STRING: "postgres://postgres:postgres@db:5432/docs_db?sslmode=disable"
     depends_on:

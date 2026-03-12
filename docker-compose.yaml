@@ -32,11 +32,11 @@ services:
   # ---------------------------------------------------------
   atlas-apply:
     build:
-      context: src/backend/db/tools
+      context: db/tools
       dockerfile: Dockerfile
     container_name: atlas-apply
     volumes:
-      - ./src/backend/db/migration:/migration:ro
+      - ./db/migration:/migration:ro
     environment:
       CONNECTION_STRING: "${CONNECTION_STRING:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@${DB_HOST:-db}:${DB_PORT:-5432}/app_portfolio?sslmode=disable}"
     depends_on:
