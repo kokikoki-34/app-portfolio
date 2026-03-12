@@ -1,0 +1,10 @@
+version: 3
+
+tasks:
+  create:
+    desc: Create migration.
+    dir: "{{.TASKFILE_DIR}}/db/tools/scripts"
+    vars:
+      NAME: '{{default "" .NAME }}'
+    cmds:
+      - cmd: ./create_migration.sh {{.NAME}}

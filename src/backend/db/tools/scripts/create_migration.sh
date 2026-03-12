@@ -5,8 +5,7 @@ set -euo pipefail
 # Path Resolution (Location Independent)
 # --------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-COMPOSE_FILE="$PROJECT_ROOT/docker-compose.yaml"
+COMPOSE_FILE="$(cd "$SCRIPT_DIR/.." && pwd)/docker-compose.yaml"
 
 # --------------------------------------
 # Variables
@@ -25,11 +24,13 @@ log (){
 
 cleanup() {
   log "INFO" "Cleaning up resources"
-  docker compose -f "$COMPOSE_FILE" --project-directory "$PROJECT_ROOT" --profile "$PROFILE_NAME" down -v > /dev/null 2>&1
+  docker compose -f "$COMPOSE_FILE" down -v > /dev/null 2>&1
 }
 
 main(){
   trap cleanup EXIT SIGINT SIGTERM
+
+  echo $COMPOSE_FILE
 
   local migration_name="${1:-""}"
   if [[ -z "$migration_name" ]]; then
@@ -43,16 +44,10 @@ main(){
   log "INFO" "Migration creating: $migration_name"
 
   if ! MIGRATION_NAME="$migration_name" \
-    docker compose -f "$COMPOSE_FILE" \
-    --project-directory "$PROJECT_ROOT" \
-    --profile "$PROFILE_NAME" \
-    up \
+    docker compose -f "$COMPOSE_FILE" up \
     --abort-on-container-exit \
     --quiet-pull \
-    --quiet-build \
-    --attach "$ATLAS_SERVICE" \
-    --exit-code-from "$ATLAS_SERVICE" \
-    "$ATLAS_SERVICE"; then
+    --quiet-build; then
     log "ERROR" "Atlas migration failed. Check the logs above."
     exit 1
   fi
