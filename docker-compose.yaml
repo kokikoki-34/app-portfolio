@@ -38,7 +38,7 @@ services:
     volumes:
       - ./src/backend/db/migration:/migration:ro
     environment:
-      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://postgres:postgres@db:5432/app_portfolio?sslmode=disable}"
+      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@${DB_HOST:-db}:${DB_PORT:-5432}/app_portfolio?sslmode=disable}"
     depends_on:
       db:
         condition: service_healthy
@@ -62,7 +62,7 @@ services:
       - path: .env.local
         required: false
     environment:
-      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://postgres:postgres@db:5432/app_portfolio?sslmode=disable}"
+      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@${DB_HOST:-db}:${DB_PORT:-5432}/app_portfolio?sslmode=disable}"
     ports:
       - ${PORT_BACKEND:-8082}:8080
     depends_on:
