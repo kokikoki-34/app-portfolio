@@ -10,9 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"portfolio/internal/func/health/api"
-	"portfolio/internal/func/health/app"
-	"portfolio/internal/func/health/infra"
+	healthAPI "portfolio/internal/func/health/api"
+	healthApp "portfolio/internal/func/health/app"
+	healthInfra "portfolio/internal/func/health/infra"
+
 	"portfolio/internal/infra/config"
 	"portfolio/internal/infra/db"
 )
@@ -47,12 +48,12 @@ func main() {
 	// -------------------------------------------------------------------------
 	// DI
 	// -------------------------------------------------------------------------
-	heartbeatRepo := infra.NewRepository(logger, pool)
-	heartbeatService := app.NewService(logger, heartbeatRepo)
-	handler := api.NewHeartbeatHandler(logger, heartbeatService)
+	healthRepo := healthInfra.NewHealthRepository(pool)
+	healthService := healthApp.NewHealthService(healthRepo)
+	healthHandler := healthAPI.NewHealthAPI(logger, healthService)
 
 	// Routing
-	mux.HandleFunc("GET /api/health", handler.Check)
+	healthHandler.BindServer(mux)
 
 	// HTTP server
 	server := &http.Server{

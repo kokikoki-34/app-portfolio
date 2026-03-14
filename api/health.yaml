@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: Portfolio API
+  description: Portfolio backend with health monitoring.
+  version: 1.0.0
+
+paths:
+  /api/health:
+    get:
+      summary: Check health of the service.
+      operationId: getHealth
+      responses:
+        "200":
+          description: Healthy service.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, current_time]
+      properties:
+        status:
+          type: string
+          example: "healthy"
+        current_time:
+          type: string
+          format: date-time
+          example: "2026-03-12T19:34:24Z"

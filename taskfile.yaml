@@ -49,8 +49,3 @@ tasks:
     desc: Generate documents
     cmds:
       - task: _docs:generate
-
-  sqlc:generate:
-    desc: Generate code with sqlc
-    cmds:
-      - sqlc generate
