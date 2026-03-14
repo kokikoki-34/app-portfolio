@@ -22,6 +22,7 @@ import (
 // HealthResponse defines model for HealthResponse.
 type HealthResponse struct {
 	CurrentTime time.Time `json:"current_time"`
+	Status      string    `json:"status"`
 }
 
 // ServerInterface represents all server handlers.
@@ -182,12 +183,13 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/1yRwW7UMBRFfyW6sMwkmaRCwjvEArqrECsQQq7z0riN/Yz9UhhV+Xdkh2EYVnFsH/v6",
-	"3BcYdoE9eUlQL0hmJqfL8CPpReZPlAL7RHkmRA4UxVJZN2uM5OW7WFdW6Zd2YSEo9F3/5tANh2P/+fhW",
-	"DTeqv/mCGhNHpwUKoxY6FKyGnEJGkkTrH7BtNSL9WG2kEeorkmhZE+rry779xfj+kYxgy5z1E+ccIyUT",
-	"bRDLHgp3HGXixXJ1r80T+bH6aWWu5vK4yrG3wvnqJmexUvJfmHd3t6jxTDHtpx2brumw1eBAXgcLhaHp",
-	"mgE1gpa5eGl1sO1+fv59IMmfbE7nTLcjFD6Q7HqR37sbLnDfdcUteyFfQB3CYk1B28eUU5xbyqPXkSYo",
-	"vGovNbZ/Omz/K7BIupaz7zhVieKzNdQU/2l1TscTFN7PZJ7OqniqZKZ/t27b7wAAAP//v6DTRz4CAAA=",
+	"H4sIAAAAAAAC/2SRQY+bMBCF/wqa9kiAQFSpvlU9tLlFVU+tqsoxQ3CCPV57yC6K+O8rm81ms3vC2PPN",
+	"vHnvAoqMI4uWA4gLBNWjken4E+XA/S8MjmzAeOM8OfSsMb2r0Xu0/J+1Sa/4JI0bEATUVf1lVTWrdf17",
+	"/VU0G1Fv/kAOHXkjGQS0knGVsBx4chEJ7LU9wJxDYMljuG/YJynTx/I5B48Po/bYgvh7ZfN7bf9eMdof",
+	"UTHMkdO2ozilxaC8dqzJgoAdee5o0JTtpTqhbbNHzX22CMgMWc0URxdRi+ak7sZ8220hhzP6sHRbF1VR",
+	"xaXIoZVOg4CmqIoGcnCS+7RlKZ0ul/7x94AcP9FoGTVtWxDwA3lJA+K+SyAJrqsqRUGW0SZQOjdoldDy",
+	"GKKKa6jx9NljBwI+lbfUy5fIy3d5J5PuzVkqpiygP2uFRfI/jMZIP4GA7z2q09Uq6jLu8W3pPD8HAAD/",
+	"/yWtaNJtAgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

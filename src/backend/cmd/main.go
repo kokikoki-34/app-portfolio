@@ -14,8 +14,8 @@ import (
 	healthApp "portfolio/internal/func/health/app"
 	healthInfra "portfolio/internal/func/health/infra"
 
-	config "portfolio/internal/infra/config"
-	db "portfolio/internal/infra/db"
+	"portfolio/internal/infra/config"
+	"portfolio/internal/infra/db"
 )
 
 func main() {

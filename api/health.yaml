@@ -23,6 +23,9 @@ components:
       type: object
       required: [status, current_time]
       properties:
+        status:
+          type: string
+          example: "healthy"
         current_time:
           type: string
           format: date-time
