@@ -2,6 +2,6 @@ package app
 
 import "time"
 
-type Heartbeat struct {
+type Health struct {
 	At time.Time
 }

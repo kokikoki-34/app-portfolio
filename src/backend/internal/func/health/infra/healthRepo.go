@@ -2,7 +2,7 @@ package infra
 
 import (
 	"context"
-	"log/slog"
+	"fmt"
 
 	"portfolio/internal/func/health/app"
 	"portfolio/internal/func/health/infra/db/gen"
@@ -10,27 +10,25 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type Repository struct {
-	logger  *slog.Logger
+type HealthRepository struct {
 	pool    *pgxpool.Pool
 	queries *gen.Queries
 }
 
-func NewRepository(logger *slog.Logger, pool *pgxpool.Pool) *Repository {
-	return &Repository{
-		logger:  logger,
+func NewHealthRepository(pool *pgxpool.Pool) *HealthRepository {
+	return &HealthRepository{
 		pool:    pool,
 		queries: gen.New(pool),
 	}
 }
 
-func (r *Repository) Pulse(ctx context.Context) (*app.Heartbeat, error) {
+func (r *HealthRepository) Pulse(ctx context.Context) (*app.Health, error) {
 	at, err := r.queries.UpdateHeartbeat(ctx)
 	if err != nil {
-		r.logger.Error("failed to update heartbeat", "error", err)
+		err = fmt.Errorf("HealthRepository.Pulse: failed to update heartbeat table: %w", err)
 		return nil, err
 	}
 
-	hb := &app.Heartbeat{At: at}
+	hb := &app.Health{At: at}
 	return hb, nil
 }
