@@ -1,12 +1,10 @@
-import { useGetHealth } from "./func/health/api/generated/default/default";
+import { useGetHealth } from "./api/generated/default/default";
 
-export default function App() {
+export function HealthView() {
   const { data, isLoading, isError } = useGetHealth();
 
   if (isLoading) return <div>Checking server...</div>;
   if (isError) return <div>Server is unreachable.</div>;
-
-  console.log(data);
 
   return (
     <div>
