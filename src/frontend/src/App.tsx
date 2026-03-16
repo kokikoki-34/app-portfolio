@@ -1,35 +1,17 @@
-import { useState, useEffect } from "react";
+import { useGetHealth } from "./func/health/api/generated/default/default";
 
 export default function App() {
-  const [healthMessage, setHealthMessage] = useState<string>("Loading...");
+  const { data, isLoading, isError } = useGetHealth();
 
-  useEffect(() => {
-    const fetchHealth = async () => {
-      try {
-        const res = await fetch("/api/health");
+  if (isLoading) return <div>Checking server...</div>;
+  if (isError) return <div>Server is unreachable.</div>;
 
-        if(!res.ok){
-          setHealthMessage("Error fetching health")
-          return;
-        }
+  console.log(data);
 
-        const data = await res.text();
-        setHealthMessage(data);
-      }
-      catch(error) {
-        if (error instanceof Error) {
-          setHealthMessage("An error occurred:" + error.message);
-        } else if (typeof error === "string") {
-          setHealthMessage("An error occurred:" + error.toUpperCase());
-        } else {
-          setHealthMessage("An unknown error occurred");
-        }
-      }
-    };
-
-    fetchHealth();
-
-  }, []);
-
-  return <p>{healthMessage}</p>;
+  return (
+    <div>
+      <p>System Status: {data?.data?.status}</p>
+      <p>Time: {data?.data?.current_time}</p>
+    </div>
+  );
 }
