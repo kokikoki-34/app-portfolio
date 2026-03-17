@@ -9,7 +9,7 @@ export function HealthView() {
   return (
     <div>
       <p>System Status: {data?.data?.status}</p>
-      <p>Time: {data?.data?.current_time}</p>
+      <p>Time: {data?.data?.currentTime}</p>
     </div>
   );
 }

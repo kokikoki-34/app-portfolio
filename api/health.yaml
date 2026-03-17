@@ -26,7 +26,7 @@ components:
         status:
           type: string
           example: "healthy"
-        current_time:
+        currentTime:
           type: string
           format: date-time
           example: "2026-03-12T19:34:24Z"

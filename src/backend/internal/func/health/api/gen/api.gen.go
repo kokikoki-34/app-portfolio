@@ -21,8 +21,8 @@ import (
 
 // HealthResponse defines model for HealthResponse.
 type HealthResponse struct {
-	CurrentTime time.Time `json:"current_time"`
-	Status      string    `json:"status"`
+	CurrentTime *time.Time `json:"currentTime,omitempty"`
+	Status      string     `json:"status"`
 }
 
 // ServerInterface represents all server handlers.
@@ -43,7 +43,6 @@ type MiddlewareFunc func(http.Handler) http.Handler
 
 // GetHealth operation middleware
 func (siw *ServerInterfaceWrapper) GetHealth(w http.ResponseWriter, r *http.Request) {
-
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetHealth(w, r)
 	}))
@@ -182,14 +181,13 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
-
-	"H4sIAAAAAAAC/2SRQY+bMBCF/wqa9kiAQFSpvlU9tLlFVU+tqsoxQ3CCPV57yC6K+O8rm81ms3vC2PPN",
-	"vHnvAoqMI4uWA4gLBNWjken4E+XA/S8MjmzAeOM8OfSsMb2r0Xu0/J+1Sa/4JI0bEATUVf1lVTWrdf17",
-	"/VU0G1Fv/kAOHXkjGQS0knGVsBx4chEJ7LU9wJxDYMljuG/YJynTx/I5B48Po/bYgvh7ZfN7bf9eMdof",
-	"UTHMkdO2ozilxaC8dqzJgoAdee5o0JTtpTqhbbNHzX22CMgMWc0URxdRi+ak7sZ8220hhzP6sHRbF1VR",
-	"xaXIoZVOg4CmqIoGcnCS+7RlKZ0ul/7x94AcP9FoGTVtWxDwA3lJA+K+SyAJrqsqRUGW0SZQOjdoldDy",
-	"GKKKa6jx9NljBwI+lbfUy5fIy3d5J5PuzVkqpiygP2uFRfI/jMZIP4GA7z2q09Uq6jLu8W3pPD8HAAD/",
-	"/yWtaNJtAgAA",
+	"H4sIAAAAAAAC/2SRQe/TMAzFv0plOHZt105I5IY4wG4T2gmEUJa6a7YmDok7qKZ+d5SUMvb/n5om/tnP",
+	"791BkXFk0XIAcYegejQyHT+jHLj/gsGRDRhvnCeHnjWmdzV6j5aP2qRH/C2NGxAE1FX9blM1m2193L4X",
+	"zU7Uu6+QQ0feSAYBrWTccMRy4MlFJLDX9gxzDoElj+G5YZ+UTK/L5xw8/hy1xxbEt5XNV2k/0pDv/zA6",
+	"XVAxzJHTtqM4pcWgvHasyYKAA3nuaNCUnaS6om2zX5r7bBGQGbKaKY4uohbNSd2D+XDYQw439GHpti2q",
+	"oopLkUMrnQYBTVEVDeTgJPdpy1I6XS794+8ZOX6izzJq2rcg4BPyEgbEfZc8ElxXVUqCLKNNoHRu0Cqh",
+	"5SVEFWum8fTWYwcC3pSP0Mu/iZcv4k4mPZuzVExZQH/TCovkfxiNkX4CAR97VNfVKuoy7vH/0nn+EwAA",
+	"///y9qHwbAIAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
