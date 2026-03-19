@@ -25,6 +25,7 @@ export const fetchData = async <T>(
     } catch {
       error.message = errorBody;
     }
+    throw error;
   }
 
   if (res.status === HttpStatus.NO_CONTENT) {
