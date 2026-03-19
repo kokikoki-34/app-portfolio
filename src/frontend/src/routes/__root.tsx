@@ -1,7 +1,9 @@
 import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router";
 import "../index.css";
+import { ErrorComponent } from "../shared/components/errorComponent";
 import { Footer } from "../shared/components/footer";
 import { Header } from "../shared/components/header";
+import { NotFoundComponent } from "../shared/components/notFoundComponent";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -12,6 +14,13 @@ export const Route = createRootRoute({
     ],
     links: [{ rel: "icon", href: "/vite.svg" }],
   }),
+
+  errorComponent: ({ error, reset }) => (
+    <ErrorComponent error={error} reset={reset} />
+  ),
+
+  notFoundComponent: () => <NotFoundComponent />,
+
   component: () => (
     <>
       <HeadContent />
