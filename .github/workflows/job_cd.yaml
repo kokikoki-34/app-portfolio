@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v6
 
       - name: Setup Atlas
         uses: ariga/setup-atlas@v0
@@ -30,7 +30,7 @@ jobs:
       - name: Apply Migrations to Neon
         run: |
           atlas migrate apply \
-            --dir "file://src/backend/db/migration" \
+            --dir "file://db/migration" \
             --url "${{ secrets.CONNECTION_STRING }}" \
             --revisions-schema public \
             --allow-dirty
@@ -51,8 +51,8 @@ jobs:
         service: [proxy, backend, frontend]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v6
 
       - name: Google Auth
         id: auth

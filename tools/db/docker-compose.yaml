@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: docs_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  atlas-apply:
+    build:
+      context: ../../db/tools
+      dockerfile: Dockerfile
+    container_name: atlas-apply
+    volumes:
+      - ../../db/migration:/migration:ro
+    environment:
+      CONNECTION_STRING: "postgres://postgres:postgres@db:5432/docs_db?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: [ "sh", "-c" ]
+    command:
+     - |
+      atlas migrate apply \
+      --dir "file:///migration" \
+      --url "$$CONNECTION_STRING"
+
+  # The document generator tool.
+  tbls:
+    image: k1low/tbls:latest
+    depends_on:
+      db:
+        condition: service_healthy
+      atlas-apply:
+        condition: service_completed_successfully
+    volumes:
+      - ../../docs/db:/work
+    working_dir: /work
+    command: doc -f "postgres://postgres:postgres@db:5432/docs_db?sslmode=disable" design

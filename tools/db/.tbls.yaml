@@ -1,0 +1,6 @@
+name: Project Database Schema
+dest: docs/db
+
+er:
+  format: svg
+  distance: 1

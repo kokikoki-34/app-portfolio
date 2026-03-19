@@ -1,0 +1,28 @@
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  test:
+    name: Build Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Task
+        uses: go-task/setup-task@v1
+        with:
+          version: 3.x
+
+      - name: Build Images (Check)
+        run: task app:build
+
+      - name: Run Tests
+        run: task -t ./infra/ci/taskfile.yaml ci-test
+
+      - name: Tear Down
+        run: task app:stop

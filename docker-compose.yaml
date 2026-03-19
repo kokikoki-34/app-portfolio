@@ -32,13 +32,13 @@ services:
   # ---------------------------------------------------------
   atlas-apply:
     build:
-      context: src/backend/db
+      context: db/tools
       dockerfile: Dockerfile
     container_name: atlas-apply
     volumes:
-      - ./src/backend/db/migration:/migration:ro
+      - ./db/migration:/migration:ro
     environment:
-      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://postgres:postgres@db:5432/app_portfolio?sslmode=disable}"
+      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@${DB_HOST:-db}:${DB_PORT:-5432}/app_portfolio?sslmode=disable}"
     depends_on:
       db:
         condition: service_healthy
@@ -62,7 +62,7 @@ services:
       - path: .env.local
         required: false
     environment:
-      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://postgres:postgres@db:5432/app_portfolio?sslmode=disable}"
+      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@${DB_HOST:-db}:${DB_PORT:-5432}/app_portfolio?sslmode=disable}"
     ports:
       - ${PORT_BACKEND:-8082}:8080
     depends_on:
@@ -124,52 +124,7 @@ services:
       frontend:
         condition: service_healthy
 
-  # ---------------------------------------------------------
-  # Shadow Database for Atlas Diff (Profile: tools)
-  # ---------------------------------------------------------
-  shadow-db:
-    profiles: ["migration"]
-    image: postgres:18-alpine
-    container_name: shadow-db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "postgres", "-p", "5432"]
-      interval: 3s
-      timeout: 1s
-      retries: 3
-      start_period: 10s
 
-  # ---------------------------------------------------------
-  # Atlas Migrate: Generate diff (Profile: tools)
-  # ---------------------------------------------------------
-  atlas-migrate:
-    profiles: ["migration"]
-    build:
-      context: src/backend/db
-      dockerfile: Dockerfile
-    container_name: atlas-migrate
-    volumes:
-      - ./src/backend/db/migration:/migration:rw
-      - ./src/backend/db/schema:/schema:ro
-    environment:
-      - MIGRATION_NAME=${MIGRATION_NAME:-""}
-    depends_on:
-      shadow-db:
-        condition: service_healthy
-    entrypoint: [ "sh", "-c" ]
-    command:
-      - |
-        # concatenate all sql files in the schema directories into a single file
-        find /schema -name "*.sql" | sort | xargs cat > /tmp/all_schema.sql && \
-
-        # run atlas migrate
-        atlas migrate diff "${MIGRATION_NAME}" \
-          --dir "file:///migration" \
-          --to "file:///tmp/all_schema.sql" \
-          --dev-url "postgres://postgres:postgres@shadow-db:5432/postgres?sslmode=disable"
 
 volumes:
   postgres_data:

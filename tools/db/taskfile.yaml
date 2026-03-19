@@ -1,0 +1,13 @@
+version: 3
+
+tasks:
+  default:
+    cmds:
+      - task --list
+
+  generate:
+    desc: Generate documents
+    dir: "{{.TASKFILE_DIR}}"
+    cmds:
+      - docker compose up --wait
+      - docker compose down -v

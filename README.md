@@ -1,6 +1,7 @@
 # Portfolio
 
 ## About
+
 This repository is dedicated to the development of my personal portfolio website.
 
 ## Project Goals
@@ -17,10 +18,10 @@ This repository is dedicated to the development of my personal portfolio website
 
 ### Future Enhancements (Optional)
 
-- **Digital Business Card**: 
+- **Digital Business Card**:
   - Apple Pay integration.
   - Virtual Contact File (`.vcf`) support.
-- **On-premise Infrastructure**: 
+- **On-premise Infrastructure**:
   - Dedicated database server.
 
 ## Objectives
@@ -34,13 +35,13 @@ The primary purposes of this project are:
   - Infrastructure management with Terraform.
   - Automated CI/CD pipelines.
   - Modern branching strategies (e.g., GitLab Flow).
- 
+
 ## Tech Stack & Architecture
 
 This project prioritizes two principle to ensure maintainability and scalability.
 
 - **Separation of Concerns**
-- **Single Source of Truth (SSOT)** principle 
+- **Single Source of Truth (SSOT)** principle
 
 ### Technologies
 
@@ -68,7 +69,7 @@ This project prioritizes two principle to ensure maintainability and scalability
 
 - **Hybrid Development Strategy**
   - Leverages containers for testing and deployment to ensure portability, while allowing local environments for rapid debugging and lightweight development.
- 
+
 ## Implementation Roadmap
 
 ### Phase 1: Foundation & Deployment Pipeline (MVP)
@@ -88,13 +89,13 @@ This project prioritizes two principle to ensure maintainability and scalability
 ### Phase 3: Core Features, Automation & DB Integration
 
 - **Automated Testing**: Integrate Unit/Integration tests into the CI pipeline.
-- **Design-First API Development**: 
-    - Establish OpenAPI as the SSOT.
-    - Automate code generation for the Go backend (e.g., `oapi-codegen`) and TypeScript types for the frontend.
+- **Design-First API Development**:
+  - Establish OpenAPI as the SSOT.
+  - Automate code generation for the Go backend (e.g., `oapi-codegen`) and TypeScript types for the frontend.
 - **Database Automation**: Implement automated DB documentation and CI checks (tool selection TBD).
-- **Database Integration**: 
-    - Provision Neon DB and set up `sqlc` for Schema-First development.
-    - Implement CRUD operations and API endpoints in Go.
+- **Database Integration**:
+  - Provision Neon DB and set up `sqlc` for Schema-First development.
+  - Implement CRUD operations and API endpoints in Go.
 - **Frontend Development**: Build the public portfolio UI and the Zero-Trust protected admin console.
 
 ### Phase 4: Future Enhancements (Backlog)
