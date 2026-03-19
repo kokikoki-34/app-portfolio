@@ -21,7 +21,7 @@ components:
   schemas:
     HealthResponse:
       type: object
-      required: [status, current_time]
+      required: [status, currentTime]
       properties:
         status:
           type: string

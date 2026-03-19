@@ -43,6 +43,6 @@ func (h *HealthAPI) GetHealth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := &gen.HealthResponse{Status: "Healthy", CurrentTime: &health.At}
+	res := &gen.HealthResponse{Status: "Healthy", CurrentTime: health.At}
 	web.RespondJSON(w, h.logger, http.StatusOK, res)
 }

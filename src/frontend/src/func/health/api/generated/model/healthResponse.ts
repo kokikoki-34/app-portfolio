@@ -8,5 +8,5 @@
 
 export interface HealthResponse {
   status: string;
-  currentTime?: string;
+  currentTime: string;
 }
