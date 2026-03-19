@@ -1,12 +1,11 @@
 import { useGetHealth } from "./api/generated/default/default";
 
 export function HealthView() {
-  const { data, isLoading, isError } = useGetHealth();
+  const { data, isLoading, isError, error } = useGetHealth();
 
   if (isLoading)
     return <div className="text-muted">Checking system status...</div>;
-  if (isError)
-    return <div className="text-red-400">Server is unreachable.</div>;
+  if (isError) throw error;
 
   return (
     <div className="w-full">
