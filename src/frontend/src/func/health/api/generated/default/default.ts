@@ -24,7 +24,7 @@ import type {
   HealthResponse
 } from '../model';
 
-import { fetchData } from '../../../../../api/fetchData';
+import { fetchData } from '../../../../../shared/api/fetchData';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];

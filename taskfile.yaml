@@ -28,6 +28,8 @@ tasks:
   app:start:
     desc: Start application
     cmds:
+      - task: app:stop
+      - task: app:build
       - docker compose up
 
   app:stop:

@@ -6,9 +6,9 @@ export const healthRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/health",
   component: () => (
-    <div className="py-10">
+    <>
       <h1 className="text-2xl font-bold mb-6">System Monitoring</h1>
       <HealthView />
-    </div>
+    </>
   ),
 });
