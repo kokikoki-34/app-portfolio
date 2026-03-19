@@ -16,7 +16,6 @@ export const Route = createRootRoute({
     <>
       <HeadContent />
 
-      {/* 1. サイト全体の背景色を指定 */}
       <div className="min-h-screen bg-background text-foreground flex flex-col">
         <Header />
 

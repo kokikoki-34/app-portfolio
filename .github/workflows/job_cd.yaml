@@ -22,7 +22,7 @@ jobs:
     environment: ${{ github.ref_name }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Atlas
         uses: ariga/setup-atlas@v0
@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Google Auth
         id: auth

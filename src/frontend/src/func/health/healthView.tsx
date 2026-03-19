@@ -1,4 +1,3 @@
-// src/shared/components/HealthView.tsx (推測)
 import { useGetHealth } from "./api/generated/default/default";
 
 export function HealthView() {
