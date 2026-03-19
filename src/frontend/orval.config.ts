@@ -5,7 +5,7 @@ const commonConfig = {
   httpClient: "fetch" as const,
   override: {
     mutator: {
-      path: "./src/api/fetchData.ts",
+      path: "./src/shared/api/fetchData.ts",
       name: "fetchData",
     },
   },
