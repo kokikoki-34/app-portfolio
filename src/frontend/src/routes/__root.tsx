@@ -1,9 +1,10 @@
 import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router";
 import "../index.css";
-import { ErrorComponent } from "../shared/components/errorComponent";
+import { ErrorContent } from "../shared/components/errorContent";
 import { Footer } from "../shared/components/footer";
 import { Header } from "../shared/components/header";
-import { NotFoundComponent } from "../shared/components/notFoundComponent";
+import { MainContent } from "../shared/components/mainContent";
+import { NotFoundContent } from "../shared/components/notFoundContent";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -16,10 +17,10 @@ export const Route = createRootRoute({
   }),
 
   errorComponent: ({ error, reset }) => (
-    <ErrorComponent error={error} reset={reset} />
+    <ErrorContent error={error} reset={reset} />
   ),
 
-  notFoundComponent: () => <NotFoundComponent />,
+  notFoundComponent: () => <NotFoundContent />,
 
   component: () => (
     <>
@@ -32,9 +33,9 @@ export const Route = createRootRoute({
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-12">
               <div className="md:col-span-8 md:col-start-3 lg:col-span-6 lg:col-start-4">
-                <div className="bg-white rounded-lg p-8 md:p-12 shadow-none border-none">
+                <MainContent>
                   <Outlet />
-                </div>
+                </MainContent>
               </div>
             </div>
           </div>

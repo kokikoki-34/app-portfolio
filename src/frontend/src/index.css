@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./shared/style/accent.css";
+@import "./shared/style/grayscale.css";
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans:wght@400;700&display=swap');
 
@@ -7,10 +9,11 @@
       "Noto Sans", "Noto Sans JP",
       ui-sans-serif, system-ui, sans-serif;
 
-  --color-background: var(--color-gray-100);
-  --color-foreground: var(--color-gray-900);
-  --color-muted: var(--color-gray-500);
+  --color-foreground: var(--gray-12);
+  --color-background: var(--gray-2);
 
-  --color-accent: #77efc6;
-  --color-accent-hover: #77efc6;
+  --color-foreground-muted: var(--gray-8);
+
+  --color-foreground-accent: var(--green-10);
+  --color-background-accent: var(--green-2);
 }

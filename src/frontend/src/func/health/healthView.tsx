@@ -4,7 +4,9 @@ export function HealthView() {
   const { data, isLoading, isError, error } = useGetHealth();
 
   if (isLoading)
-    return <div className="text-muted">Checking system status...</div>;
+    return (
+      <div className="text-foreground-muted">Checking system status...</div>
+    );
   if (isError) throw error;
 
   return (
