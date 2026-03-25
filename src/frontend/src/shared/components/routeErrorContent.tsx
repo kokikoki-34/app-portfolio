@@ -3,7 +3,7 @@ interface ErrorContentProps {
   reset: () => void;
 }
 
-export function ErrorContent({ error, reset }: ErrorContentProps) {
+export function RouteErrorContent({ error, reset }: ErrorContentProps) {
   return (
     <div className="text-center py-10">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 text-red-500 mb-6">

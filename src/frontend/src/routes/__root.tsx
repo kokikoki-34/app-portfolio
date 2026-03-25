@@ -1,10 +1,10 @@
 import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router";
 import "../index.css";
-import { ErrorContent } from "../shared/components/errorContent";
 import { Footer } from "../shared/components/footer";
 import { Header } from "../shared/components/header";
 import { MainContent } from "../shared/components/mainContent";
 import { NotFoundContent } from "../shared/components/notFoundContent";
+import { RouteErrorContent } from "../shared/components/routeErrorContent";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -17,7 +17,7 @@ export const Route = createRootRoute({
   }),
 
   errorComponent: ({ error, reset }) => (
-    <ErrorContent error={error} reset={reset} />
+    <RouteErrorContent error={error} reset={reset} />
   ),
 
   notFoundComponent: () => <NotFoundContent />,
