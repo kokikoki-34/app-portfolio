@@ -5,10 +5,19 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { Route as rootRoute } from "./routes/__root";
+import { aboutRoute } from "./routes/about";
+import { contactRoute } from "./routes/contact";
 import { healthRoute } from "./routes/health";
 import { homeRoute } from "./routes/home";
+import { worksRoute } from "./routes/works";
 
-const routeTree = rootRoute.addChildren([healthRoute, homeRoute]);
+const routeTree = rootRoute.addChildren([
+  healthRoute,
+  homeRoute,
+  aboutRoute,
+  worksRoute,
+  contactRoute,
+]);
 
 const router = createRouter({ routeTree });
 
