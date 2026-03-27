@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { createRoute } from "@tanstack/react-router";
 import React from "react";
-import { Route as rootRoute } from "../router/root";
+import { rootRoute } from "../router/root";
 import { BaseLink } from "../shared/components/baseLink";
 import { NavMenu } from "../shared/constants/navMenu";
 import { ROUTES } from "../shared/constants/routes";

@@ -1,5 +1,5 @@
 import { createRoute } from "@tanstack/react-router";
-import { Route as rootRoute } from "../router/root";
+import { rootRoute } from "../router/root";
 import { ROUTES } from "../shared/constants/routes";
 
 export const worksRoute = createRoute({

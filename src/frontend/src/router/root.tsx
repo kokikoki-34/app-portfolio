@@ -6,7 +6,7 @@ import { MainContent } from "../shared/components/mainContent";
 import { NotFoundContent } from "../shared/components/notFoundContent";
 import { RouteErrorContent } from "../shared/components/routeErrorContent";
 
-export const Route = createRootRoute({
+export const rootRoute = createRootRoute({
   head: () => ({
     meta: [
       { title: "YASUI Koki" },

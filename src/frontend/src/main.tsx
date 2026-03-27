@@ -9,7 +9,7 @@ import { contactRoute } from "./pages/contact";
 import { healthRoute } from "./pages/health";
 import { homeRoute } from "./pages/home";
 import { worksRoute } from "./pages/works";
-import { Route as rootRoute } from "./router/root";
+import { rootRoute } from "./router/root";
 
 const routeTree = rootRoute.addChildren([
   healthRoute,
