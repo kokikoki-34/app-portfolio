@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Dialog, VisuallyHidden } from "radix-ui";
 import { useState } from "react";
 import { NavMenu } from "../constants/navMenu";
+import { ROUTES } from "../constants/routes";
 import { BaseLink } from "./baseLink";
 
 export function Header() {
@@ -17,7 +18,10 @@ export function Header() {
       <div
         className={`${headerStyle} justify-between bg-slate-50/50 backdrop-blur-lg`}
       >
-        <Link to="/" className="p-4 text-xl tracking-tight text-foreground">
+        <Link
+          to={ROUTES.HOME}
+          className="p-4 text-xl tracking-tight text-foreground"
+        >
           Koki<span className="text-foreground-accent">.</span>
         </Link>
 

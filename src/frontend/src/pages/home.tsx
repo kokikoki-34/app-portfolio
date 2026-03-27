@@ -4,10 +4,11 @@ import React from "react";
 import { Route as rootRoute } from "../router/root";
 import { BaseLink } from "../shared/components/baseLink";
 import { NavMenu } from "../shared/constants/navMenu";
+import { ROUTES } from "../shared/constants/routes";
 
 export const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/",
+  path: ROUTES.HOME,
   component: () => (
     <>
       <div className="flex flex-col my-10">

@@ -1,10 +1,11 @@
 import { createRoute } from "@tanstack/react-router";
 import { HealthView } from "../func/health/healthView";
 import { Route as rootRoute } from "../router/root";
+import { ROUTES } from "../shared/constants/routes";
 
 export const healthRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/health",
+  path: ROUTES.HEALTH,
   component: () => (
     <>
       <h1 className="text-2xl font-bold mb-6">System Monitoring</h1>
