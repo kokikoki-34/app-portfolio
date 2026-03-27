@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { Dialog, VisuallyHidden } from "radix-ui";
 import { useState } from "react";
 import { NavMenu } from "../constants/navMenu";
-import { ROUTES } from "../constants/routes";
 import { BaseLink } from "./baseLink";
 
 export function Header() {
@@ -19,7 +18,8 @@ export function Header() {
         className={`${headerStyle} justify-between bg-slate-50/50 backdrop-blur-lg`}
       >
         <Link
-          to={ROUTES.HOME}
+          to="/$lang"
+          from="/$lang"
           className="p-4 text-xl tracking-tight text-foreground"
         >
           Koki<span className="text-foreground-accent">.</span>
@@ -77,7 +77,12 @@ export function Header() {
 
 function MenuLinks({ onClick }: { onClick?: () => void }) {
   return NavMenu.map((menu) => (
-    <BaseLink key={menu.href} to={menu.href} className="p-4" onClick={onClick}>
+    <BaseLink
+      key={menu.href}
+      to={`/$lang/${menu.href}`}
+      className="p-4"
+      onClick={onClick}
+    >
       {menu.name}
     </BaseLink>
   ));

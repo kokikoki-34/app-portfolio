@@ -1,14 +1,14 @@
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { createRoute } from "@tanstack/react-router";
 import React from "react";
-import { rootRoute } from "../router/root";
+import { langRoute } from "../router/langRoute";
 import { BaseLink } from "../shared/components/baseLink";
 import { NavMenu } from "../shared/constants/navMenu";
-import { ROUTES } from "../shared/constants/routes";
+import { ROUTE_PATH } from "../shared/constants/routePath";
 
 export const homeRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: ROUTES.HOME,
+  getParentRoute: () => langRoute,
+  path: ROUTE_PATH.HOME,
   component: () => (
     <>
       <div className="flex flex-col my-10">
@@ -26,7 +26,7 @@ export const homeRoute = createRoute({
 
       {NavMenu.filter((menu) => menu.name !== "HOME").map((menu) => (
         <React.Fragment key={menu.href}>
-          <BaseLink to={menu.href} className="p-4">
+          <BaseLink to={`/$lang/${menu.href}`} className="p-4">
             <div className="flex justify-between items-center">
               <div className="text-lg">{menu.name}</div>
               <div>
