@@ -1,5 +1,5 @@
 import { createRoute } from "@tanstack/react-router";
-import { Route as rootRoute } from "./__root";
+import { Route as rootRoute } from "../router/root";
 
 export const contactRoute = createRoute({
   getParentRoute: () => rootRoute,

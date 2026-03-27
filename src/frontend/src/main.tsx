@@ -4,12 +4,12 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { Route as rootRoute } from "./routes/__root";
-import { aboutRoute } from "./routes/about";
-import { contactRoute } from "./routes/contact";
-import { healthRoute } from "./routes/health";
-import { homeRoute } from "./routes/home";
-import { worksRoute } from "./routes/works";
+import { aboutRoute } from "./pages/about";
+import { contactRoute } from "./pages/contact";
+import { healthRoute } from "./pages/health";
+import { homeRoute } from "./pages/home";
+import { worksRoute } from "./pages/works";
+import { Route as rootRoute } from "./router/root";
 
 const routeTree = rootRoute.addChildren([
   healthRoute,

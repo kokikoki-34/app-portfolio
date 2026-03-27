@@ -1,6 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
 import { HealthView } from "../func/health/healthView";
-import { Route as rootRoute } from "./__root";
+import { Route as rootRoute } from "../router/root";
 
 export const healthRoute = createRoute({
   getParentRoute: () => rootRoute,
