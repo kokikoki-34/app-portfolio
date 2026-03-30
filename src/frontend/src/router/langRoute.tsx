@@ -4,7 +4,7 @@ import { Header } from "../shared/components/header";
 import { MainLayout } from "../shared/components/mainLayout";
 import { NotFoundContent } from "../shared/components/notFoundContent";
 import { RouteErrorContent } from "../shared/components/routeErrorContent";
-import { LANGUAGES, type Language } from "../shared/constants/language";
+import { isValidLanguage, type Language } from "../shared/constants/language";
 import { rootRoute } from "./rootRoute";
 
 export const langRoute = createRoute({
@@ -39,7 +39,3 @@ export const langRoute = createRoute({
     </>
   ),
 });
-
-function isValidLanguage(value: Language): boolean {
-  return Object.values(LANGUAGES).includes(value);
-}

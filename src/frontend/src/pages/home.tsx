@@ -9,34 +9,39 @@ import { ROUTE_PATH } from "../shared/constants/routePath";
 export const homeRoute = createRoute({
   getParentRoute: () => langRoute,
   path: ROUTE_PATH.HOME,
-  component: () => (
-    <>
-      <div className="flex flex-col my-10">
-        <div className="flex text-5xl my-6 gap-3 tracking-tighter">
-          <div>YASUI</div>
-          <div>Koki</div>
-          <span className="text-foreground-accent">.</span>
-        </div>
-        <div className="text-xs text-foreground-muted">
-          Software Engineer based in Tokyo, Japan
-          <br />
-          Pursuing the beauty of simplicity.
-        </div>
-      </div>
+  component: () => {
+    const params = langRoute.useParams();
+    const lang = params.lang;
 
-      {NavMenu.filter((menu) => menu.name !== "HOME").map((menu) => (
-        <React.Fragment key={menu.href}>
-          <BaseLink to={`/$lang/${menu.href}`} className="p-4">
-            <div className="flex justify-between items-center">
-              <div className="text-lg">{menu.name}</div>
-              <div>
-                <ArrowRightIcon className="text-lg" />
+    return (
+      <>
+        <div className="flex flex-col my-10">
+          <div className="flex text-5xl my-6 gap-3 tracking-tighter">
+            <div>YASUI</div>
+            <div>Koki</div>
+            <span className="text-foreground-accent">.</span>
+          </div>
+          <div className="text-xs text-foreground-muted">
+            Software Engineer based in Tokyo, Japan
+            <br />
+            Pursuing the beauty of simplicity.
+          </div>
+        </div>
+
+        {NavMenu.filter((menu) => menu.name !== "HOME").map((menu) => (
+          <React.Fragment key={menu.href}>
+            <BaseLink to={`/${lang}/${menu.href}`} className="p-4">
+              <div className="flex justify-between items-center">
+                <div className="text-lg">{menu.name}</div>
+                <div>
+                  <ArrowRightIcon className="text-lg" />
+                </div>
               </div>
-            </div>
-          </BaseLink>
-          <hr className="border-border" />
-        </React.Fragment>
-      ))}
-    </>
-  ),
+            </BaseLink>
+            <hr className="border-border" />
+          </React.Fragment>
+        ))}
+      </>
+    );
+  },
 });
