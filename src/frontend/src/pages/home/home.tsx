@@ -1,10 +1,10 @@
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { createRoute } from "@tanstack/react-router";
 import React from "react";
-import { langRoute } from "../router/langRoute";
-import { BaseLink } from "../shared/components/baseLink";
-import { NavMenu } from "../shared/constants/navMenu";
-import { ROUTE_PATH } from "../shared/constants/routePath";
+import { langRoute } from "../../router/langRoute";
+import { BaseLink } from "../../shared/components/baseLink";
+import { NavMenu } from "../../shared/constants/navMenu";
+import { ROUTE_PATH } from "../../shared/constants/routePath";
 
 export const homeRoute = createRoute({
   getParentRoute: () => langRoute,
