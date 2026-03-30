@@ -17,7 +17,11 @@ export function Header() {
       <div
         className={`${headerStyle} justify-between bg-slate-50/50 backdrop-blur-lg`}
       >
-        <Link to="/" className="p-4 text-xl tracking-tight text-foreground">
+        <Link
+          to="/$lang"
+          from="/$lang"
+          className="p-4 text-xl tracking-tight text-foreground"
+        >
           Koki<span className="text-foreground-accent">.</span>
         </Link>
 
@@ -73,7 +77,12 @@ export function Header() {
 
 function MenuLinks({ onClick }: { onClick?: () => void }) {
   return NavMenu.map((menu) => (
-    <BaseLink key={menu.href} to={menu.href} className="p-4" onClick={onClick}>
+    <BaseLink
+      key={menu.href}
+      to={`/$lang/${menu.href}`}
+      className="p-4"
+      onClick={onClick}
+    >
       {menu.name}
     </BaseLink>
   ));

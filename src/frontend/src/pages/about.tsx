@@ -1,9 +1,10 @@
 import { createRoute } from "@tanstack/react-router";
-import { Route as rootRoute } from "./__root";
+import { langRoute } from "../router/langRoute";
+import { ROUTE_PATH } from "../shared/constants/routePath";
 
 export const aboutRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/about",
+  getParentRoute: () => langRoute,
+  path: ROUTE_PATH.ABOUT,
   component: () => (
     <>
       <h1 className="text-2xl font-bold mb-6">About</h1>

@@ -18,9 +18,6 @@ export function BaseLink({
       to={to}
       className={`hover:text-foreground-accent transition-colors duration-200 ${className}`}
       onClick={onClick}
-      activeProps={{
-        className: "text-foreground-accent",
-      }}
     >
       {children}
     </Link>
