@@ -1,6 +1,7 @@
 import { createRoute } from "@tanstack/react-router";
 import { HealthView } from "../func/health/healthView";
 import { langRoute } from "../router/langRoute";
+import { Heading } from "../shared/components/heading";
 import { ROUTE_PATH } from "../shared/constants/routePath";
 
 export const healthRoute = createRoute({
@@ -8,7 +9,7 @@ export const healthRoute = createRoute({
   path: ROUTE_PATH.HEALTH,
   component: () => (
     <>
-      <h1 className="text-2xl font-bold mb-6">System Monitoring</h1>
+      <Heading>System Monitoring </Heading>
       <HealthView />
     </>
   ),

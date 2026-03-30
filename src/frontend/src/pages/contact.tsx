@@ -1,5 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
 import { langRoute } from "../router/langRoute";
+import { Heading } from "../shared/components/heading";
 import { ROUTE_PATH } from "../shared/constants/routePath";
 
 export const contactRoute = createRoute({
@@ -7,7 +8,7 @@ export const contactRoute = createRoute({
   path: ROUTE_PATH.CONTACT,
   component: () => (
     <>
-      <h1 className="text-2xl font-bold mb-6">Contact</h1>
+      <Heading>Contact</Heading>
     </>
   ),
 });
