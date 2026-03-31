@@ -28,7 +28,7 @@ export const homeRoute = createRoute({
           </div>
         </div>
 
-        {NavMenu.filter((menu) => menu.name !== "HOME").map((menu) => (
+        {NavMenu.filter((menu) => menu.href !== ROUTE_PATH.HOME).map((menu) => (
           <React.Fragment key={menu.href}>
             <BaseLink to={`/${lang}/${menu.href}`} className="p-4">
               <div className="flex justify-between items-center">

@@ -1,7 +1,9 @@
-import { createRoute } from "@tanstack/react-router";
+import { createRoute, redirect } from "@tanstack/react-router";
 import { HealthView } from "../../func/health/healthView";
 import { langRoute } from "../../router/langRoute";
-import { Heading } from "../../shared/components/heading";
+import { rootRoute } from "../../router/rootRoute";
+import { Title } from "../../shared/components/headings";
+import { isValidLanguage, LANGUAGES } from "../../shared/constants/language";
 import { ROUTE_PATH } from "../../shared/constants/routePath";
 
 export const healthRoute = createRoute({
@@ -9,8 +11,22 @@ export const healthRoute = createRoute({
   path: ROUTE_PATH.HEALTH,
   component: () => (
     <>
-      <Heading>System Monitoring </Heading>
+      <Title>System Monitoring</Title>
       <HealthView />
     </>
   ),
+});
+
+export const healthIndexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/health",
+  beforeLoad: () => {
+    const detectedLang = navigator.language.split("-")[0];
+    const lang = isValidLanguage(detectedLang) ? detectedLang : LANGUAGES.EN;
+
+    throw redirect({
+      to: "/$lang/health",
+      params: { lang: lang },
+    });
+  },
 });

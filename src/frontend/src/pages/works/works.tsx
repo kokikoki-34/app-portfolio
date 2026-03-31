@@ -1,6 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
 import { langRoute } from "../../router/langRoute";
-import { Heading } from "../../shared/components/heading";
+import { Title } from "../../shared/components/headings";
 import { ROUTE_PATH } from "../../shared/constants/routePath";
 
 export const worksRoute = createRoute({
@@ -8,7 +8,7 @@ export const worksRoute = createRoute({
   path: ROUTE_PATH.WORKS,
   component: () => (
     <>
-      <Heading>Works</Heading>
+      <Title>Works</Title>
     </>
   ),
 });

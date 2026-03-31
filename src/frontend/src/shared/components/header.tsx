@@ -15,7 +15,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40">
       <div
-        className={`${headerStyle} justify-between bg-slate-50/50 backdrop-blur-lg`}
+        className={`${headerStyle} justify-between bg-white/50 backdrop-blur-lg`}
       >
         <Link
           to="/$lang"

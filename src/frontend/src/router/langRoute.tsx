@@ -4,7 +4,11 @@ import { Header } from "../shared/components/header";
 import { MainLayout } from "../shared/components/mainLayout";
 import { NotFoundContent } from "../shared/components/notFoundContent";
 import { RouteErrorContent } from "../shared/components/routeErrorContent";
-import { isValidLanguage, type Language } from "../shared/constants/language";
+import {
+  isValidLanguage,
+  LANGUAGES,
+  type Language,
+} from "../shared/constants/language";
 import { rootRoute } from "./rootRoute";
 
 export const langRoute = createRoute({
@@ -39,3 +43,10 @@ export const langRoute = createRoute({
     </>
   ),
 });
+
+export const getLang = (): Language => {
+  const { lang: langParam } = langRoute.useParams();
+  const lang = isValidLanguage(langParam) ? langParam : LANGUAGES.EN;
+
+  return lang;
+};
