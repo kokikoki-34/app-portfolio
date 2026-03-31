@@ -3,14 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { routeTree } from "./router/routeTree";
 
-import { Route as rootRoute } from "./routes/__root";
-import { healthRoute } from "./routes/health";
-import { homeRoute } from "./routes/home";
-
-const routeTree = rootRoute.addChildren([healthRoute, homeRoute]);
-
-const router = createRouter({ routeTree });
+export const router = createRouter({ routeTree: routeTree });
 
 declare module "@tanstack/react-router" {
   interface Register {

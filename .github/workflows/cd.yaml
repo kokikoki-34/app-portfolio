@@ -13,11 +13,11 @@ jobs:
     uses: ./.github/workflows/job_ci_build_test.yaml
     secrets: inherit
 
-  ci_verify_docs:
+  ci-verify-docs:
     uses: ./.github/workflows/job_ci_verify_docs.yaml
     secrets: inherit
 
   cd:
-    needs: [ ci-build-test, ci_verify_docs]
+    needs: [ ci-build-test, ci-verify-docs]
     uses: ./.github/workflows/job_cd.yaml
     secrets: inherit
