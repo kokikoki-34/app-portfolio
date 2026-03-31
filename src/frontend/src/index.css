@@ -12,7 +12,7 @@
   --color-foreground-muted: var(--color-slate-500);
 
   --color-foreground-accent: var(--green-10);
-  --color-background-accent: var(--green-2);
+  --color-background-accent: var(--green-3);
 
   --color-border: var(--color-slate-100);
 }
