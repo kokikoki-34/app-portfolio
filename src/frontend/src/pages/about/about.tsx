@@ -24,13 +24,13 @@ export const aboutRoute = createRoute({
       <>
         <Title>About</Title>
         {/* Icon and name */}
-        <div className="flex gap-10 justify-start items-center mx-4 my-8">
+        <div className="flex flex-col gap-10 justify-start items-start my-8 md:flex-row md:items-center md:mx-4 ">
           <Avatar.Root>
             <Avatar.Image
               className=""
               style={{ borderRadius: "50%" }}
-              height={150}
-              width={150}
+              height={200}
+              width={200}
               src={SelfieImage}
               alt="YASUI Koki"
             />
@@ -87,7 +87,7 @@ export const aboutRoute = createRoute({
         </div>
 
         <Heading>Interests</Heading>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {content?.interests?.map((item) => (
             <span
               key={item}
