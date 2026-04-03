@@ -98,7 +98,7 @@ export const AboutContents: Contents<AboutContent> = {
       interests: ["物理学", "MacOS/Linux", "海外ドラマ"],
     },
     en: {
-      name: "Koki Yasui",
+      name: "YASUI Koki",
       birthDate: "2000-03-04",
       hometown: "Hokkaido, Japan",
       location: "Tokyo, Japan",
