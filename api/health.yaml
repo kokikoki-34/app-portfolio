@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Portfolio API
+  title: Health API
   description: Portfolio backend with health monitoring.
   version: 1.0.0
 

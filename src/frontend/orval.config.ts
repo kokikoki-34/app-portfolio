@@ -12,13 +12,22 @@ const commonConfig = {
 };
 
 export default defineConfig({
-  portfolio: {
+  health: {
     input: "../../api/health.yaml",
     output: {
       ...commonConfig,
       mode: "tags-split",
       target: "./src/func/health/api/generated/endpoints.ts",
       schemas: "./src/func/health/api/generated/model",
+    },
+  },
+  contact: {
+    input: "../../api/contact.yaml",
+    output: {
+      ...commonConfig,
+      mode: "tags-split",
+      target: "./src/func/contact/api/generated/endpoints.ts",
+      schemas: "./src/func/contact/api/generated/model",
     },
   },
 });
