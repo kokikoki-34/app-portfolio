@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 3000 3000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(4.8,0,0,4.8,-1220.166655,86.489254)">
+        <g transform="matrix(1,0,0,1,443.277203,290.287513)">
+            <text x="67.174px" y="152.944px" style="font-family:'HelveticaNeue-Bold', 'Helvetica Neue';font-weight:700;font-size:416.667px;fill:rgb(28,41,60);">K</text>
+        </g>
+        <g transform="matrix(6.350858,0,0,6.350858,-2040.620131,-1098.650331)">
+            <g transform="matrix(65.607929,0,0,65.607929,405.625723,242.783203)">
+            </g>
+            <text x="361.865px" y="242.783px" style="font-family:'HelveticaNeue-Bold', 'Helvetica Neue';font-weight:700;font-size:65.608px;fill:rgb(28,41,60);">Y</text>
+        </g>
+        <g transform="matrix(6.350858,0,0,6.350858,-1849.370131,-1098.650331)">
+            <g transform="matrix(65.607929,0,0,65.607929,380.104239,242.783203)">
+            </g>
+            <text x="361.865px" y="242.783px" style="font-family:'HelveticaNeue-Bold', 'Helvetica Neue';font-weight:700;font-size:65.608px;fill:rgb(108,228,188);">.</text>
+        </g>
+        <g transform="matrix(6.350858,0,0,6.350858,-1509.370131,-1098.650331)">
+            <g transform="matrix(65.607929,0,0,65.607929,380.104239,242.783203)">
+            </g>
+            <text x="361.865px" y="242.783px" style="font-family:'HelveticaNeue-Bold', 'Helvetica Neue';font-weight:700;font-size:65.608px;fill:rgb(108,228,188);">.</text>
+        </g>
+    </g>
+</svg>
