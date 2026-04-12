@@ -8,7 +8,7 @@ This repository is dedicated to the development of my personal portfolio website
 
 ### Core Features (Must)
 
-- **Simple SPA Portfolio**: Accessible at `www.kokiyasui.com`.
+- **Simple SPA Portfolio**: Accessible at `kokiyasui.com`.
 - **Secure Admin Console**: A dedicated management interface for administrative tasks.
 - **Managed Database**: Integration with a managed DB service and a console for data management.
 - **Infrastructure as Code (IaC)**: Provisioning and management via Terraform.
@@ -52,8 +52,10 @@ This project prioritizes two principle to ensure maintainability and scalability
 | **Database** | Neon (PostgreSQL) | Serverless DB to minimize operational overhead. Branching features align perfectly with development environments. |
 | **DB Access** | `sqlc` (Schema-First) | Adheres to Go's philosophy by using static code generation from raw SQL instead of an ORM, providing full transparency. |
 | **Infrastructure** | GCP Cloud Run | Decoupled frontend and backend containers. Optimizes costs through scale-to-zero capabilities. |
-| **IaC** | Terraform | Industry-standard structure with `modules` and `envs(dev/prod)` directories. Physically isolates states to protect production environments. |
-| **Security / Network** | Cloudflare Workers + GCP IAM | Zero-trust architecture. Cloud Run is set to "Require Authentication," with Cloudflare Workers injecting OIDC tokens for secure access. |
+| **IaC** | Terraform | Industry-standard structure with `modules` and `provision(dev/main)` directories. Physically isolates states to protect production environments. |
+| **Security / Network** | Go Proxy + GCP IAM | Zero-trust architecture. Cloud Run is set to "Require Authentication," with a custom Go proxy injecting OIDC tokens for secure access. |
+| **Task Runner** | Task (`taskfile.dev`) | Simplifies command execution across Docker, Go, and JS toolchains. |
+| **Toolchain Manager** | `mise` | Deterministic management of tools like `go`, `node`, and `sqlc`. |
 
 ### Branching Strategy & CI/CD
 
@@ -83,7 +85,7 @@ This project prioritizes two principle to ensure maintainability and scalability
 ### Phase 2: Security & Infrastructure Integration (Zero Trust)
 
 - **IAM Hardening**: Secure Cloud Run services by disabling unauthenticated access.
-- **Zero Trust Proxy**: Deploy Cloudflare Workers to handle OIDC token injection for decoupled authentication.
+- **Zero Trust Proxy**: Deploy a Go-based reverse proxy on Cloud Run to handle OIDC token injection for decoupled authentication.
 - **Custom Domain**: Configure `kokiyasui.com` with SSL/TLS encryption.
 
 ### Phase 3: Core Features, Automation & DB Integration
@@ -92,7 +94,7 @@ This project prioritizes two principle to ensure maintainability and scalability
 - **Design-First API Development**:
   - Establish OpenAPI as the SSOT.
   - Automate code generation for the Go backend (e.g., `oapi-codegen`) and TypeScript types for the frontend.
-- **Database Automation**: Implement automated DB documentation and CI checks (tool selection TBD).
+- **Database Automation**: Implement automated DB documentation and CI checks using `atlas` for schema management and `tbls` for documentation.
 - **Database Integration**:
   - Provision Neon DB and set up `sqlc` for Schema-First development.
   - Implement CRUD operations and API endpoints in Go.
