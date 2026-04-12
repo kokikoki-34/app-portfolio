@@ -64,7 +64,7 @@ export const AboutContents: Contents<AboutContent> = {
         {
           period: "2018.04 – 2022.03",
           title: "名古屋大学",
-          subtitle: "工学部 機械・航空宇宙工学科 卒業",
+          description: "工学部 機械・航空宇宙工学科 卒業",
           techStack: ["C/C++", "Python", "ROS", "Linux"],
         },
       ],
@@ -123,7 +123,7 @@ export const AboutContents: Contents<AboutContent> = {
         {
           period: "Apr 2018 - Mar 2022",
           title: "Nagoya University",
-          subtitle: "B.E. in Mechanical and Aerospace Engineering",
+          description: "B.E. in Mechanical and Aerospace Engineering",
           techStack: ["C/C++", "Python", "ROS", "Linux"],
         },
       ],
