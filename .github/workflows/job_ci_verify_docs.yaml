@@ -1,0 +1,28 @@
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  verify:
+    name: Verify Documentation
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Task
+        uses: go-task/setup-task@v1
+
+      - name: Generate Documentation to Verify
+        run: task docs:generate
+
+      - name: Check for differences
+        run: |
+          git add docs
+          if ! git diff --cached --exit-code docs; then
+            echo ":error::Generated docs differ from committed docs. Run 'task docs:generate' locally and commit the changes."
+            exit 1
+          fi

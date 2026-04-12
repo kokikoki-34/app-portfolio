@@ -1,0 +1,130 @@
+name: app-portfolio
+
+services:
+  # ---------------------------------------------------------
+  # Main Application Database
+  # ---------------------------------------------------------
+  db:
+    image: postgres:18-alpine
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.local
+        required: false
+    environment:
+      POSTGRES_DB: ${DB_NAME:-app_portfolio}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      TZ: Asia/Tokyo
+    ports:
+      - "${PORT_DB:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ---------------------------------------------------------
+  # Atlas Apply: Execute migrations (Profile: tools)
+  # ---------------------------------------------------------
+  atlas-apply:
+    build:
+      context: db/tools
+      dockerfile: Dockerfile
+    container_name: atlas-apply
+    volumes:
+      - ./db/migration:/migration:ro
+    environment:
+      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@${DB_HOST:-db}:${DB_PORT:-5432}/app_portfolio?sslmode=disable}"
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: [ "sh", "-c" ]
+    command:
+     - |
+      atlas migrate apply \
+      --dir "file:///migration" \
+      --url "$$CONNECTION_STRING"
+
+  # ---------------------------------------------------------
+  # Go Backend API
+  # ---------------------------------------------------------
+  backend:
+    build:
+      context: src/backend
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.local
+        required: false
+    environment:
+      CONNECTION_STRING: "${CONNECTION_STRING:-postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@${DB_HOST:-db}:${DB_PORT:-5432}/app_portfolio?sslmode=disable}"
+    ports:
+      - ${PORT_BACKEND:-8082}:8080
+    depends_on:
+      db:
+        condition: service_healthy
+      atlas-apply:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ---------------------------------------------------------
+  # React/Vite Frontend
+  # ---------------------------------------------------------
+  frontend:
+    build:
+      context: src/frontend
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.local
+        required: false
+    ports:
+      - ${PORT_FRONTEND:-8083}:8080
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ---------------------------------------------------------
+  # IAM Authorization Proxy
+  # ---------------------------------------------------------
+  proxy:
+    build:
+      context: src/proxy
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.local
+        required: false
+    environment:
+      HOST_ALLOWED: "localhost"
+      URL_BACKEND: "http://backend"
+      PORT_BACKEND: 8080
+      URL_FRONTEND: "http://frontend"
+      PORT_FRONTEND: 8080
+    ports:
+      - ${PORT_PROXY:-8081}:8080
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+
+
+
+volumes:
+  postgres_data:

@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: Contact API
+  description: Portfolio contact API.
+  version: 1.0.0
+
+paths:
+  /api/contact:
+    get:
+      summary: Get contact info.
+      operationId: getContact
+      responses:
+        "200":
+          description: Successfully get contact.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactResponse"
+
+components:
+  schemas:
+    ContactResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "YASUI Koki"
+        contactItems:
+          type: array
+          description: "Direct contact methods like Email or Phone."
+          items:
+            $ref: "#/components/schemas/ContactItem"
+        snsItems:
+          type: array
+          description: "Social networking service accounts."
+          items:
+            $ref: "#/components/schemas/SnsItem"
+
+    ContactItem:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Mail"
+        value:
+          type: string
+          example: "contact@example.com"
+        link:
+          type: string
+          format: uri
+          example: "mailto:contact@kokiyasui.com"
+
+    SnsItem:
+      type: object
+      properties:
+        icon:
+          type: string
+          example: "instagram"
+        title:
+          type: string
+          example: "Instagram"
+        value:
+          type: string
+          example: "account_id"
+        link:
+          type: string
+          format: uri
+          example: "http://account.com"

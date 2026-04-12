@@ -1,0 +1,33 @@
+# macOS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# directories
+/bin
+/log
+
+# editor setting files
+.vscode/*
+!.vscode/settings.json.template
+!.vscode/extensions.json.template
+!.vscode/tasks.json.template
+!.vscode/launch.json.template
+.idea/
+*.swp
+*.swo
+
+# environment files
+*.local
+*.local.*
+!*.example
+!*.template
+
+# key files
+*.pem
+*.key
+*.p12

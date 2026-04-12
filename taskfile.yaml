@@ -1,0 +1,53 @@
+version: 3
+
+includes:
+  _migration:
+    taskfile: ./db/taskfile.yaml
+    internal: true
+
+  _docs:
+    taskfile: ./tools/db/taskfile.yaml
+    internal: true
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+
+  setup:
+    desc: Set up develop environment
+    cmds:
+      - mise install
+
+  app:build:
+    desc: Build application
+    cmds:
+      - docker compose build
+
+  app:start:
+    desc: Start application
+    cmds:
+      - task: app:stop
+      - task: app:build
+      - docker compose up
+
+  app:stop:
+    desc: Stop and remove application
+    cmds:
+      - docker compose down
+
+  database:delete:
+    desc: Delete database
+    cmds:
+      - docker compose down -v
+
+  migration:create:
+    desc: Create migration
+    cmds:
+      - task: _migration:create
+
+  docs:generate:
+    desc: Generate documents
+    cmds:
+      - task: _docs:generate

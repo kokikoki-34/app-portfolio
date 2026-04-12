@@ -1,0 +1,16 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ "main", "develop" ]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-test:
+    uses: ./.github/workflows/job_ci_build_test.yaml
+
+  verify-docs:
+    uses: ./.github/workflows/job_ci_verify_docs.yaml

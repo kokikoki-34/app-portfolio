@@ -1,0 +1,23 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [ "main", "develop"]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  ci-build-test:
+    uses: ./.github/workflows/job_ci_build_test.yaml
+    secrets: inherit
+
+  ci-verify-docs:
+    uses: ./.github/workflows/job_ci_verify_docs.yaml
+    secrets: inherit
+
+  cd:
+    needs: [ ci-build-test, ci-verify-docs]
+    uses: ./.github/workflows/job_cd.yaml
+    secrets: inherit
