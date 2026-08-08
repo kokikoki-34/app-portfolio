@@ -5,7 +5,7 @@ services:
   # Main Application Database
   # ---------------------------------------------------------
   db:
-    image: postgres:18-alpine
+    image: postgres:latest
     env_file:
       - path: .env
         required: false
@@ -19,7 +19,7 @@ services:
     ports:
       - "${PORT_DB:-5433}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
