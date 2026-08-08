@@ -5,7 +5,7 @@ services:
   # Main Application Database
   # ---------------------------------------------------------
   db:
-    image: postgres:18.4-alpine
+    image: postgres:latest
     env_file:
       - path: .env
         required: false
