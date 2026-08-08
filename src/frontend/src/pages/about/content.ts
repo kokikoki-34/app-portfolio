@@ -50,7 +50,7 @@ export const AboutContents: Contents<AboutContent> = {
 
       experience: [
         {
-          period: "2024年 –",
+          period: "2024–",
           title: "ソフトウェアエンジニア",
           description: "金融機関向けのソフトウェア開発",
           techStack: [
@@ -60,9 +60,16 @@ export const AboutContents: Contents<AboutContent> = {
           ],
         },
       ],
+
       education: [
         {
-          period: "2018.04 – 2022.03",
+          period: "2022.04–2024.03",
+          title: "名古屋大学",
+          description: "工学研究科 航空宇宙工学専攻 中途退学",
+          techStack: ["C/C++", "Python", "ROS", "Linux"],
+        },
+        {
+          period: "2018.04–2022.03",
           title: "名古屋大学",
           description: "工学部 機械・航空宇宙工学科 卒業",
           techStack: ["C/C++", "Python", "ROS", "Linux"],
@@ -109,7 +116,7 @@ export const AboutContents: Contents<AboutContent> = {
 
       experience: [
         {
-          period: "2024 – Present",
+          period: "2024 –",
           title: "Software Engineer",
           description: "Software development for financial institutions.",
           techStack: [
@@ -120,6 +127,12 @@ export const AboutContents: Contents<AboutContent> = {
         },
       ],
       education: [
+        {
+          period: "Apr 2022 - Mar 2024",
+          title: "Nagoya University",
+          description: "M.E. in Aerospace Engineering (Incomplete)",
+          techStack: ["C/C++", "Python", "ROS", "Linux"],
+        },
         {
           period: "Apr 2018 - Mar 2022",
           title: "Nagoya University",
