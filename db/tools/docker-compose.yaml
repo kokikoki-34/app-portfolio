@@ -5,7 +5,7 @@ services:
   # Shadow Database for Atlas Diff (Profile: tools)
   # ---------------------------------------------------------
   shadow-db:
-    image: postgres:18-alpine
+    image: postgres:latest
     container_name: shadow-db
     environment:
       POSTGRES_USER: postgres

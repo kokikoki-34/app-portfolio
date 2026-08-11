@@ -1,7 +1,7 @@
 # ==========================================
 # Builder
 # ==========================================
-FROM golang:1.26 AS builder
+FROM golang:latest AS builder
 
 WORKDIR /app
 

@@ -38,7 +38,7 @@ export const ContactContent: ContactResponse = {
     {
       title: "Zenn",
       value: "kokikoki-34",
-      link: "https://zenn.dev/koki34",
+      link: "https://zenn.dev/kokikoki_34",
     },
   ],
 };

@@ -1,7 +1,7 @@
 # ==========================================
 # Stage 1: Builder (Node.js)
 # ==========================================
-FROM node:lts-alpine3.22 AS builder
+FROM node:latest AS builder
 
 WORKDIR /app
 
