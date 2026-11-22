@@ -1,9 +1,21 @@
 interface ErrorContentProps {
-  error: Error;
+  error: unknown;
   reset: () => void;
 }
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === "string") {
+    return error;
+  }
+  return "Unknown error";
+}
+
 export function RouteErrorContent({ error, reset }: ErrorContentProps) {
+  const errorMessage = getErrorMessage(error);
+
   return (
     <div className="text-center py-10">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 text-red-500 mb-6">
@@ -17,7 +29,7 @@ export function RouteErrorContent({ error, reset }: ErrorContentProps) {
       <p className="text-foreground-muted mb-8 max-w-sm mx-auto">
         An error happened. Try again later.
         <br />
-        <span className="text-xs font-mono opacity-50">{error.message}</span>
+        <span className="text-xs font-mono opacity-50">{errorMessage}</span>
       </p>
 
       <button
